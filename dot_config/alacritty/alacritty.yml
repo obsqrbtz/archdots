@@ -1,0 +1,71 @@
+window:
+  padding:
+    x: 10
+    y: 10
+  dynamic_padding: false
+  decorations: none
+  opacity: 1.0
+
+# Font configuration (changes require restart)
+font:
+  normal:
+    family: Cozette
+    style: Medium
+
+  bold:
+    family: Cozette
+    style: Medium
+
+  italic:
+    family: Cozette
+    style: Medium
+
+  size: 12.0
+
+  offset:
+    x: 1
+    y: 0
+
+  glyph_offset:
+    x: 0
+    y: 0
+
+draw_bold_text_with_bright_colors: false
+custom_cursor_colors: true
+
+cursor:
+  #   - ▇ Block
+  #   - _ Underline
+  #   - | Beam
+  style: Underline
+  unfocused_hollow: false
+
+live_config_reload: true
+
+colors:
+  primary:
+    background: '0x000000'
+    foreground: '0xf8f8f2'
+  cursor:
+    text: '0xf8f8f2'
+    cursor: '0xf8f8f2'
+  # Normal colors
+  normal:
+    black:   '0x000000'
+    red:     '0xfff555'
+    green:   '0x59fa7b'
+    yellow:  '0xf1fa8c'
+    blue:    '0xbd93f8'
+    magenta: '0xff79c6'
+    cyan:    '0x8be9fd'
+    white:   '0xf8f8f2'
+  # Bright colors
+  bright:
+    black:   '0x6272a4'
+    red:     '0xff6e6e'
+    green:   '0x69ff94'
+    yellow:  '0xffffa5'
+    blue:    '0xd6acff'
+    magenta: '0xff92df'
+    cyan:    '0xa4ffff'
+    white:   '0xffffff'

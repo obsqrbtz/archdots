@@ -1,0 +1,54 @@
+$surface-darkgrey: #20252b;
+$surface-fg: #949494;
+$surface-lightgrey: #3d464e;
+$surface-grey: #2b3238;
+$surface-red: #f87070;
+
+* { all: unset; }
+
+.layout-box {
+  font-family: Iosevka Nerd Font;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 5em;
+  color: rgba($surface-fg, 0.8);
+}
+
+.close-btn {
+  min-width: 90px;
+  padding: 0.4em 0.6em 0.4em 0.4em;
+  font-size: 2em;
+  border-radius: 0.1em;
+  color: #f5edca;
+  &:hover {
+    color: white;
+  }
+}
+
+.btns-box {
+  font-size: 3em;
+  margin-left: 10px;
+
+  button {
+    color: #f5edca;
+    border-radius: 0.1em;
+    padding: 0.4em 0.6em 0.4em 0.4em;
+
+    &:hover {
+      transition: 200ms linear color;
+      color: white;
+    }
+  }
+}
+
+.calendar{
+  background: #000000;
+  color: #ebcb8b;
+  border: 2px solid #ffffff;
+}
+
+.cal {
+  color: #ffffff;
+  padding: 5px;
+  padding-bottom: 1px;
+}
