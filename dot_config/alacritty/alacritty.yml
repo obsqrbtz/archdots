@@ -44,28 +44,28 @@ live_config_reload: true
 
 colors:
   primary:
-    background: '0x000000'
-    foreground: '0xf8f8f2'
+    background: '0x1c1d21'
+    foreground: '0xddd1c7'
   cursor:
-    text: '0xf8f8f2'
-    cursor: '0xf8f8f2'
-  # Normal colors
+    text: '0x1c1d21'
+    cursor: '0xddd1c7'
+# Normal colors
   normal:
-    black:   '0x000000'
-    red:     '0xfff555'
-    green:   '0x59fa7b'
-    yellow:  '0xf1fa8c'
-    blue:    '0xbd93f8'
-    magenta: '0xff79c6'
-    cyan:    '0x8be9fd'
-    white:   '0xf8f8f2'
-  # Bright colors
+    black: '0x282a2e'
+    red: '0x7a6f87'
+    green: '0x899884'
+    yellow: '0xc09686'
+    blue: '0x7e8f9d'
+    magenta: '0xb4646b'
+    cyan: '0xf7f3bd'
+    white: '0xededed'
+# Bright colors
   bright:
-    black:   '0x6272a4'
-    red:     '0xff6e6e'
-    green:   '0x69ff94'
-    yellow:  '0xffffa5'
-    blue:    '0xd6acff'
-    magenta: '0xff92df'
-    cyan:    '0xa4ffff'
-    white:   '0xffffff'
+    black: '0x373b41'
+    red: '0x61586b'
+    green: '0x5e685b'
+    yellow: '0x886a5f'
+    blue: '0x59656f'
+    magenta: '0x794348'
+    cyan: '0xa8a580'
+    white: '0xa0a0a0'
