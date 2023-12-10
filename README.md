@@ -6,7 +6,7 @@
 
 **Init on new machine**
 
-`chezmoi init git@github.com:$GITHUB_USERNAME/dotfiles.git`
+`chezmoi init git@github.com:obsqrbtz/dotfiles.git`
 
 **Apply**
 
