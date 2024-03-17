@@ -37,7 +37,7 @@
     "format": "{name}"
   },
   "cava": {
-        "cava_config": "$XDG_CONFIG_HOME/cava/cava.conf",
+        "cava_config": "$XDG_CONFIG_HOME/cava/cava.conf"
   },
   "cpu": {
     "interval": 10,
@@ -146,7 +146,7 @@
     "format-pt": "pt-br"
   },
   "clock": {
-    "format": "{:<span color='#ffffff'>󱑒</span> %I:%M %p  <span color='#ffffff'> </span>%b %d}",
+    "format": "{:%I:%M %p %b %d}",
     "on-click": "eww open calendar",
     "on-double-click": "eww close calendar"
   },

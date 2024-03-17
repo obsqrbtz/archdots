@@ -1,6 +1,6 @@
 set $mod Mod4
 
-font pango:Cozette 10
+font pango:IosevkaTerm Nerd Font 10
 
 exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id nitrogen --restore
@@ -8,11 +8,7 @@ exec --no-startup-id mopidy
 #exec --no-startup-id picom -b
 exec --no-startup-id dunst
 exec --no-startup-id udiskie
-exec --no-startup-id i3-msg 'workspace 4:msg; exec telegram-desktop'
-exec --no-startup-id i3-msg 'workspace 4:msg; exec discord'
-exec --no-startup-id i3-msg 'workspace 3:web; exec firefox'
-exec --no-startup-id i3-msg 'workspace 1:term; exec alacritty'
-exec --no-startup-id i3-msg 'workspace 1:term; exec alacritty -e ncmpcpp'
+exec --no-startup-id bash ~/.config/polybar/launch.sh --blocks
 
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
@@ -69,7 +65,7 @@ set $ws1 "1:term"
 set $ws2 "2:code"
 set $ws3 "3:web"
 set $ws4 "4:msg"
-set $ws5 "5"
+set $ws5 "5:misc"
 set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
@@ -124,36 +120,16 @@ for_window [class="^.*"] border pixel 1
 gaps inner 0
 gaps outer 0
 
-bar {
-   	height 28 
-	position top
-    font pango:Cozette 10
-	status_command /home/dan/.config/i3status/.i3status.sh
-    tray_output none
-    strip_workspace_numbers yes
-
-    colors {
-            separator  #555555
-            background #000000
-            statusline #ffffff
-
-            #                   border  background text
-            focused_workspace  #000000 #000000    #ffffff
-            active_workspace   #000000 #000000    #cccccc
-            inactive_workspace #000000 #000000    #888888
-            urgent_workspace   #000000 #000000    #ffffff
-            binding_mode       #000000 #000000    #2e3440
-    }
-}
  # Window color settings
-    # class                 border  backgr. text    indicator
-    client.focused          #555555 #555555 #ffffff #81a1c1
-    client.unfocused        #222222 #222222 #888888 #1f222d
-    client.focused_inactive #000000 #000000 #888888 #1f222d
-    client.placeholder      #000000 #000000 #888888 #1f222d
-    client.urgent           #900000 #900000 #ffffff #900000
+    # class                 border      bground     text        indicator   child_border
+    client.focused          #ddd1c7    #ddd1c7      #1c1d21     #ddd1c7     #ddd1c7
+    client.focused_inactive #1c1d21    #282a2e      #ddd1c7     #ddd1c7     #ddd1c7
+    client.unfocused        #1c1d21    #1c1d21      #ededed     #ddd1c7     #ddd1c7
+    client.urgent           #7a6f87    #7a6f87      #1c1d21     #7a6f87     #7a6f87
+    client.placeholder      #1c1d21    #1c1d21      #ddd1c7     #ddd1c7     #ddd1c7
 
-    client.background       #242424
+    client.background       #1c1d21
+
 
 assign [class="Alacritty"] $ws1
 assign [class="code"] $ws2

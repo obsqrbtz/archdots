@@ -11,7 +11,7 @@
     kl: #acbfb5;
     black: #0e1414;
 
-    transparent: rgba(46,52,64,0);
+    transparent: rgba(0,0,0,0);
 }
 
 // defines different aspects of the window

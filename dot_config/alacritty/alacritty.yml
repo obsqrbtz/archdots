@@ -9,18 +9,18 @@ window:
 # Font configuration (changes require restart)
 font:
   normal:
-    family: Cozette
+    family: IosevkaTerm Nerd Font  
     style: Medium
 
   bold:
-    family: Cozette
+    family: IosevkaTerm Nerd Font
     style: Medium
 
   italic:
-    family: Cozette
+    family: IosevkaTerm Nerd Font
     style: Medium
 
-  size: 12.0
+  size: 9.0
 
   offset:
     x: 1
@@ -51,21 +51,22 @@ colors:
     cursor: '0xddd1c7'
 # Normal colors
   normal:
-    black: '0x282a2e'
-    red: '0x7a6f87'
-    green: '0x899884'
-    yellow: '0xc09686'
-    blue: '0x7e8f9d'
+    black:   '0x282a2e'
+    red:     '0x7a6f87'
+    green:   '0x899884'
+    yellow:  '0xc09686'
+    blue:    '0x7e8f9d'
     magenta: '0xb4646b'
-    cyan: '0xf7f3bd'
-    white: '0xededed'
+    cyan:    '0xf7f3bd'
+    white:   '0xededed'
 # Bright colors
   bright:
-    black: '0x373b41'
-    red: '0x61586b'
-    green: '0x5e685b'
-    yellow: '0x886a5f'
-    blue: '0x59656f'
+    black:   '0x373b41'
+    red:     '0x61586b'
+    green:   '0x5e685b'
+    yellow:  '0x886a5f'
+    blue:    '0x59656f'
     magenta: '0x794348'
-    cyan: '0xa8a580'
-    white: '0xa0a0a0'
+    cyan:    '0xa8a580'
+    white:   '0xa0a0a0'
+
