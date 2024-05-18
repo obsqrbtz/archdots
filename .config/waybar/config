@@ -3,7 +3,7 @@
     "position": "top", 
     "height": 32, 
     "modules-left": ["hyprland/workspaces"],
-		"modules-center": ["custom/spotify"],
+		"modules-center": ["custom/audio"],
     "modules-right": ["pulseaudio", "cpu", "memory", "tray", "clock"],
 
 
@@ -44,11 +44,10 @@
         },
         "on-click": "pavucontrol"
     },
-    "custom/spotify": {
+    "custom/audio": {
         "format": "{}",
         "max-length": 80,
-        "interval": 30, // Remove this if your script is endless and write in loop
+        "interval": 5, // Remove this if your script is endless and write in loop
         "exec": "$HOME/.config/waybar/mediaplayer.sh 2> /dev/null", // Script in resources folder
-        "exec-if": "pgrep spotify"
     }
 }
