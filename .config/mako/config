@@ -1,0 +1,15 @@
+sort=-time
+layer=overlay
+width=300
+height=140
+border-size=1
+border-color=#88c0d0
+border-radius=0
+margin=25,25,25,25
+max-icon-size=64
+default-timeout=5000
+ignore-timeout=1
+font=Mononoki Nerd Font
+background-color=#151515
+text-color=#b0afa8
+border-color=#b0afa8
