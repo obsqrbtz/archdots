@@ -1,5 +1,7 @@
 # Archdots
 
+![preview](https://raw.githubusercontent.com/obsqrbtz/archdots/master/scrot.png)
+
 ## Install
 
 ```bash
