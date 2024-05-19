@@ -1,6 +1,6 @@
 window {
 	margin: 0px;
-	border: 1px solid #384764;
+	border: 1px solid #AED18D;
 	background-color:#0E1415;
 }
 
@@ -37,5 +37,5 @@ window {
 
 #entry:selected {
 	border-radius: 0;
-	background-color: #384764;
+	background-color: #1C3703;
 }
