@@ -8,8 +8,8 @@
 }
 
 window#waybar {
-    background: #282828;
-    color: #ebdbb2;
+    background: #0E1415;
+    color: #DEE4E4;
 }
 
 #window {
@@ -20,22 +20,22 @@ window#waybar {
 #workspaces button {
     padding: 5px;
 		margin: 5px;
-    background: #282828;
-    color: white;
+    background: #0E1415;
+    color: #DEE4E4;
 }
 
 #workspaces button.active{
-	background: #95a328;
-	color: #282828;
+	background: #384764;
+	color: #DEE4E4;
 }
 
 #workspaces button.focused {
-    color: #c9545d;
-    border-top: 2px solid #c9545d;
+    color: #004F55;
+    border-top: 2px solid #002022;
 }
 
 #mode {
-    background: #64727D;
+    background: #384764;
     border-bottom: 3px solid white;
 }
 
@@ -46,6 +46,7 @@ window#waybar {
 
 #clock {
     font-weight: bold;
+		margin: 0 10px;
 }
 
 #battery {
@@ -60,7 +61,7 @@ window#waybar {
 
 @keyframes blink {
     to {
-        background-color: #ffffff;
+        background-color: #DEE4E4;
         color: black;
     }
 }
