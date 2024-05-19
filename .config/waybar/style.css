@@ -11,7 +11,7 @@ window#waybar {
     background: #0E1415;
     color: #DEE4E4;
 		border-radius: 10px;
-		border: 1px solid #384764;
+		border: 1px solid #AED18D;
 }
 
 #window {
@@ -52,16 +52,6 @@ window#waybar {
 		margin: 0 10px;
 }
 
-#battery {
-}
-
-#battery icon {
-    color: red;
-}
-
-#battery.charging {
-}
-
 @keyframes blink {
     to {
         background-color: #DEE4E4;
@@ -78,29 +68,7 @@ window#waybar {
     animation-direction: alternate;
 }
 
-#cpu {
-}
-
-#memory {
-}
-
-#network {
-}
-
-#network.disconnected {
-    background: #f53c3c;
-}
-
-#pulseaudio {
-}
-
-#pulseaudio.muted {
-}
-
 #custom-audio {
     color: rgb(102, 220, 105);
-}
-
-#tray {
 }
 
