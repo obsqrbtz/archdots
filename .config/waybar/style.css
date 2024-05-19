@@ -10,6 +10,8 @@
 window#waybar {
     background: #0E1415;
     color: #DEE4E4;
+		border-radius: 10px;
+		border: 1px solid #384764;
 }
 
 #window {
@@ -20,13 +22,14 @@ window#waybar {
 #workspaces button {
     padding: 5px;
 		margin: 5px;
+		border-radius: 10px;
     background: #0E1415;
     color: #DEE4E4;
 }
 
 #workspaces button.active{
-	background: #384764;
-	color: #DEE4E4;
+	background: #AED18D;
+	color: #1C3703;
 }
 
 #workspaces button.focused {
@@ -39,7 +42,7 @@ window#waybar {
     border-bottom: 3px solid white;
 }
 
-#clock, #battery, #cpu, #memory, #network, #pulseaudio, #custom-spotify, #tray, #mode {
+#clock, #battery, #cpu, #memory, #network, #pulseaudio, #custom-audio, #tray, #mode {
     padding: 0 3px;
     margin: 0 2px;
 }

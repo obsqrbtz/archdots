@@ -1,7 +1,11 @@
 {
     "layer": "top",
     "position": "top", 
-    "height": 32, 
+    "height": 39,
+		"margin-top": 5,
+		"margin-bottom": 0,
+		"margin-left": 10,
+		"margin-right": 10,
     "modules-left": ["hyprland/workspaces"],
 		"modules-center": ["custom/audio"],
     "modules-right": ["pulseaudio", "cpu", "memory", "tray", "clock"],
