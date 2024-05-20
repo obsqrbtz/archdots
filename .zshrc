@@ -17,3 +17,4 @@ eval "$(zoxide init zsh)"
 export PATH=$PATH:/home/dan/.spicetify
 
 alias cd="z"
+alias force-upgrade="sudo pacman -Syu --overwrite '*'"
