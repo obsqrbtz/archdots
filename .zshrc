@@ -15,6 +15,7 @@ eval $(thefuck --alias)
 eval "$(zoxide init zsh)"
 
 export PATH=$PATH:/home/dan/.spicetify
+export CMAKE_GENERATOR=Ninja
 
 alias cd="z"
 alias force-upgrade="sudo pacman -Syu --overwrite '*'"

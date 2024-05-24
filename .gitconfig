@@ -6,3 +6,5 @@
 	gpgsign = true
 [gpg]
 	format = ssh
+[credential]
+	helper = store
