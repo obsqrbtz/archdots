@@ -19,3 +19,4 @@ export CMAKE_GENERATOR=Ninja
 
 alias cd="z"
 alias force-upgrade="sudo pacman -Syu --overwrite '*'"
+alias yay-clean="yay -Scc"
