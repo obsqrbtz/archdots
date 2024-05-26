@@ -1,0 +1,23 @@
+name: Check deps
+
+on: [push]
+
+jobs:
+  checks:
+    name: Check install script
+    runs-on: ubuntu-latest
+    needs: [archlinux]
+    container:
+      image: archlinux:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: 'true'
+    - name: Run install script
+      run: |
+        chmod +x scripts/install_deps.sh
+        scripts/install_deps.sh
+        rm .gitconfig
+        stow -R -v -t ~ .
