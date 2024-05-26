@@ -23,6 +23,7 @@ jobs:
         chown build:build /home/build
         echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         chmod +x .dotfiles/scripts/install_deps.sh
+        chown -R build:build .dotfiles
         sudo -u build .dotfiles/scripts/install_deps.sh
         rm .gitconfig
         sudo -u build stow -R -v -t ~ .
