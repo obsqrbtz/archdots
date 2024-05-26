@@ -16,7 +16,8 @@ jobs:
     - name: Checkout submodules
       run: |
         pacman -Sy && pacman -S git --noconfirm
-        cd $GITHUB_WORKSPACE
+        echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+        cd ${{ env.GITHUB_WORKSPACE }}
         git submodule update --init --recursive
     - name: Run install script
       run: |
