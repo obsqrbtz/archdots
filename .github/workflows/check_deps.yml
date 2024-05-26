@@ -10,13 +10,10 @@ jobs:
       image: archlinux:latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Checkout submodules
       run: |
         pacman -Sy && pacman -S git --noconfirm
-        ls
+        git clone https://github.com/obsqrbtz/archdots.git .dotfiles
+        cd .dotfiles
         git submodule update --init --recursive
     - name: Run install script
       run: |
