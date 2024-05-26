@@ -4,6 +4,8 @@
 
 ## Dependencies
 
+Dependencies can be installed using `scripts/install_deps.sh` (see "Install" section)
+
 - [Stow](https://www.gnu.org/software/stow)
 - **zsh**
 - [Oh My Zsh](https://ohmyz.sh)
@@ -33,8 +35,14 @@
 
 ```bash
 git clone https://github.com/obsqrbtz/archdots.git ~/.dotfiles
+cd ~/.dotfiles
 git submodule init
 git submodule update --recursive
+# next two steps are optional and intended mostly for clean arch installation
+# the script will install packages, listed in "Dependencies" section,
+# set up zsh as default shell and rename the existing ~/.zshrc to .zshrc_old
+chmod+x scripts/install_deps.sh
+scripts/install_deps.sh
 rm .gitconfig #(alternatively, put your git configuratiuon in this file)
 stow -R -v -t ~ .
 ```

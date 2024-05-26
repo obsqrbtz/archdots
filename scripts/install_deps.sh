@@ -34,8 +34,9 @@ cd ../ &&
 rm -rf bibata-cursor-theme &&
 
 chsh -s $(which zsh) &&
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &&
 
+mv ~/.zshrc ~/.zshrc_old
 
 
 
