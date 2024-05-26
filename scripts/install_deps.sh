@@ -43,8 +43,8 @@ cd ../ &&
 rm -rf ~/bibata-cursor-theme &&
 
 if [ "$(whoami)" == "build" ]; then
-	chsh -s $(which zsh) $(whoami) &&
-fi
+	chsh -s $(which zsh) $(whoami)
+fi &&
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &&
 
 mv ~/.zshrc ~/.zshrc_old
