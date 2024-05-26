@@ -25,4 +25,4 @@ jobs:
         chmod +x .dotfiles/scripts/install_deps.sh
         chown -R build:build .dotfiles
         sudo -u build .dotfiles/scripts/install_deps.sh
-        build stow -R -v -t ~ .
+        stow -R -v -t ~ .
