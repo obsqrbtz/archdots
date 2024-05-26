@@ -24,5 +24,6 @@ jobs:
         echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         chmod +x .dotfiles/scripts/install_deps.sh
         chown -R build:build .dotfiles
-        sudo -u build .dotfiles/scripts/install_deps.sh
+        cd .dotfiles
+        sudo -u build scripts/install_deps.sh
         stow -R -v -t ~ .
