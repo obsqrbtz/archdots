@@ -17,11 +17,13 @@ jobs:
         git submodule update --init --recursive
     - name: Run install script
       run: |
-        useradd --shell=/bin/false build
+        useradd --shell=/bin/bash build
         usermod -L build
+        mkdir /home/build
+        chown build:build /home/build
         echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-        su - build
+        su build
         chmod +x .dotfiles/scripts/install_deps.sh
         .dotfiles/scripts/install_deps.sh
         rm .gitconfig
