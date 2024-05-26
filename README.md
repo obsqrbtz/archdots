@@ -25,7 +25,8 @@ Dependencies can be installed using `scripts/install_deps.sh` (see "Install" sec
 - [Fluent-Dark GTK theme](https://github.com/vinceliuice/Fluent-gtk-theme)
 - [Bibata-Modern-Ice cursors](https://github.com/ful1e5/Bibata_Cursor)
 
-> **Fastfetch**, **mpv**, **ranger** and **spicetify** are not actually configured, so you might ignore them, change to your configs or just remove these directories.
+> **Fastfetch**, **mpv**, **ranger** and **spicetify** are not actually configured, so you might ignore them, change to your configs or just remove these directories. 
+These apps are **not** included in the install script.
 
 > **Fluent-Dark** GTK theme is set in **hyprland.conf**.
 
