@@ -3,6 +3,7 @@
 \.git
 \.gitignore
 \.gitmodules
+\.github
 
 ^/README.*
 ^/scrot.*
