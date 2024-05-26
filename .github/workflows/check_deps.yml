@@ -15,7 +15,7 @@ jobs:
         fetch-depth: 0
     - name: Checkout submodules
       run: |
-        pacman -Sy && pacman -S git
+        pacman -Sy && pacman -S git --noconfirm
         git submodule update --init --recursive
     - name: Run install script
       run: |
