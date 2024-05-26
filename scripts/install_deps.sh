@@ -42,7 +42,9 @@ makepkg -si --noconfirm &&
 cd ../ &&
 rm -rf ~/bibata-cursor-theme &&
 
-chsh -s $(which zsh) $(whoami) &&
+if [ "$(whoami)" == "build" ]; then
+	chsh -s $(which zsh) $(whoami) &&
+fi
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &&
 
 mv ~/.zshrc ~/.zshrc_old
