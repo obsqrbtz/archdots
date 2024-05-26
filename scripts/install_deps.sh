@@ -38,7 +38,7 @@ rm -rf ~/fluent-gtk-theme &&
 
 git clone https://aur.archlinux.org/bibata-cursor-theme-bin.git ~/bibata-cursor-theme &&
 cd ~/bibata-cursor-theme &&
-makepkg -si --nocomfirm &&
+makepkg -si --noconfirm &&
 cd ../ &&
 rm -rf ~/bibata-cursor-theme &&
 
