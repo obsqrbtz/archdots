@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: Checkout
       run: |
-        pacman -Sy && pacman -S git --noconfirm
+        pacman -Sy && pacman -S git sudo --noconfirm
         git clone https://github.com/obsqrbtz/archdots.git .dotfiles
         cd .dotfiles
         git submodule update --init --recursive
@@ -22,9 +22,7 @@ jobs:
         mkdir /home/build
         chown build:build /home/build
         echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-        su build
-        echo $(whoami)
         chmod +x .dotfiles/scripts/install_deps.sh
-        .dotfiles/scripts/install_deps.sh
+        sudo -u build .dotfiles/scripts/install_deps.sh
         rm .gitconfig
-        stow -R -v -t ~ .
+        sudo -u build stow -R -v -t ~ .
