@@ -16,6 +16,7 @@ jobs:
     - name: Checkout submodules
       run: |
         pacman -Sy && pacman -S git --noconfirm
+        cd ${{ github.workspace }}
         git submodule update --init --recursive
     - name: Run install script
       run: |
