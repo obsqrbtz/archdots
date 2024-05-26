@@ -17,7 +17,7 @@ jobs:
         git submodule update --init --recursive
     - name: Run install script
       run: |
-        chmod +x scripts/install_deps.sh
-        scripts/install_deps.sh
+        chmod +x .dotfiles/scripts/install_deps.sh
+        .dotfiles/scripts/install_deps.sh
         rm .gitconfig
         stow -R -v -t ~ .
