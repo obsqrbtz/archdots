@@ -22,27 +22,27 @@ sudo pacman -S stow \
 	waybar \
 	mako \
 	kitty \
-	ttf-mononoki-nerd &&
+	ttf-mononoki-nerd --noconfirm &&
 
 git clone https://aur.archlinux.org/swww.git swww &&
 cd swww &&
-makepkg -si &&
+makepkg -si --noconfirm &&
 cd ../ &&
 rm -rf swww &&
 
 git clone https://aur.archlinux.org/fluent-gtk-theme.git fluent-gtk-theme &&
 cd fluent-gtk-theme &&
-makepkg -si &&
+makepkg -si --noconfirm &&
 cd ../ &&
 rm -rf fluent-gtk-theme &&
 
 git clone https://aur.archlinux.org/bibata-cursor-theme-bin.git bibata-cursor-theme &&
 cd bibata-cursor-theme &&
-makepkg -si &&
+makepkg -si --nocomfirm &&
 cd ../ &&
 rm -rf bibata-cursor-theme &&
 
-chsh -s $(which zsh) &&
+chsh -s $(which zsh) $(whoami) &&
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &&
 
 mv ~/.zshrc ~/.zshrc_old
