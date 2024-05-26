@@ -1,5 +1,13 @@
 #!/bin/bash
 
+sudo ()
+{
+    [[ $EUID = 0 ]] || set -- command sudo "$@"
+    "$@"
+}
+
+
+
 sudo pacman -Sy &&
 sudo pacman -S stow \
 	zsh \
