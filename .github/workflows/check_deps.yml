@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: Checkout
       run: |
-        pacman -Sy && pacman -S git sudo --noconfirm
+        pacman -Sy && pacman -S git sudo base-devel --noconfirm
         git clone https://github.com/obsqrbtz/archdots.git .dotfiles
         cd .dotfiles
         git submodule update --init --recursive
