@@ -8,7 +8,7 @@
 		"margin-right": 10,
     "modules-left": ["hyprland/workspaces"],
 		"modules-center": ["custom/audio"],
-    "modules-right": ["pulseaudio", "cpu", "memory", "tray", "clock"],
+    "modules-right": ["pulseaudio", "cpu", "memory", "custom/wireguard-manager", "tray", "clock"],
 
 
   "hyprland/workspaces": {
@@ -53,5 +53,17 @@
         "max-length": 80,
         "interval": 5, // Remove this if your script is endless and write in loop
         "exec": "$HOME/.config/waybar/mediaplayer.sh 2> /dev/null", // Script in resources folder
-    }
+    },
+		"custom/wireguard-manager": {
+    	"exec": "exec ~/.config/waybar/wireguard-manager/wireguard-manager.sh -s",
+    	"format": "{icon}",
+    	"format-icons": {
+        	"connected": "<span color=\"#50fa7b\">VPN: </span>",
+        	"disconnected": "<span color=\"#ff5555\">VPN: </span>",
+    	},
+    	"interval": "once",
+    	"on-click": "~/.config/waybar/wireguard-manager/wireguard-manager.sh -t && pkill -SIGRTMIN+1 waybar",
+    	"return-type": "json",
+    	"signal": 1,
+		}
 }
