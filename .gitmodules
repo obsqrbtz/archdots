@@ -7,6 +7,3 @@
 [submodule ".zsh/zsh-syntax-highlighting"]
 	path = .zsh/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule ".config/waybar/wireguard-manager"]
-	path = .config/waybar/wireguard-manager
-	url = git@github.com:obsqrbtz/wireguard-manager.git
