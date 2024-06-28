@@ -8,10 +8,10 @@
 }
 
 window#waybar {
-    background: #0E1415;
-    color: #DEE4E4;
+    background: #11121d;
+    color: #a0a8cd;
 		border-radius: 10px;
-		border: 1px solid #1C3703;
+		border: 1px solid #a485dd;
 }
 
 #window {
@@ -24,12 +24,12 @@ window#waybar {
 		margin: 5px;
 		border-radius: 10px;
     background: #0E1415;
-    color: #DEE4E4;
+    color: #a0a8cd;
 }
 
 #workspaces button.active{
-	background: #AED18D;
-	color: #1C3703;
+	background: #a485dd;
+	color: #06080a;
 }
 
 #workspaces button.focused {
@@ -69,6 +69,6 @@ window#waybar {
 }
 
 #custom-audio {
-    color: rgb(102, 220, 105);
+    color: #a485dd;
 }
 

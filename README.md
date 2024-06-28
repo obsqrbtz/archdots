@@ -56,8 +56,6 @@ Then tweak default display, programs, autostart and environment variables in **h
 stow -D -v -t ~ .
 ```
 
-**Neovim config is in another [repo](https://github.com/obsqrbtz/nvim-config)**
-
 ## Troubleshooting
 
 If any dependency is missing in readme or configuration does not apply correctly on your machine, feel free to create an [issue](https://github.com/obsqrbtz/archdots/issues)
