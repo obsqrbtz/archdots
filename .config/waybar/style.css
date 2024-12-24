@@ -2,16 +2,16 @@
     border: none;
     border-radius: 0;
     font-family: "Mononoki Nerd Font Propo";
-		font-weight: bold;
+    font-weight: bold;
     font-size: 16px;
     min-height: 0;
 }
 
 window#waybar {
-    background: #11121d;
-    color: #a0a8cd;
-		border-radius: 10px;
-		border: 1px solid #a485dd;
+    background: #1b1d1e;
+    color: #6e6e6e;
+    border-radius: 0;
+    border: 1px solid #4d4f4c;
 }
 
 #window {
@@ -21,15 +21,15 @@ window#waybar {
 
 #workspaces button {
     padding: 5px;
-		margin: 5px;
-		border-radius: 10px;
+    margin: 5px;
+    border-radius: 0;
     background: #0E1415;
-    color: #a0a8cd;
+    color: #6e6e6e;
 }
 
-#workspaces button.active{
-	background: #a485dd;
-	color: #06080a;
+#workspaces button.active {
+    background: #4d4f4c;
+    color: #06080a;
 }
 
 #workspaces button.focused {
@@ -42,14 +42,22 @@ window#waybar {
     border-bottom: 3px solid white;
 }
 
-#clock, #battery, #cpu, #memory, #network, #pulseaudio, #custom-audio, #tray, #mode {
+#clock,
+#battery,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#custom-audio,
+#tray,
+#mode {
     padding: 0 3px;
     margin: 0 2px;
 }
 
 #clock {
     font-weight: bold;
-		margin: 0 10px;
+    margin: 0 10px;
 }
 
 @keyframes blink {
@@ -69,6 +77,5 @@ window#waybar {
 }
 
 #custom-audio {
-    color: #a485dd;
+    color: #4d4f4c;
 }
-
