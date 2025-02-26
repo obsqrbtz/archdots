@@ -8,7 +8,7 @@
 }
 
 window#waybar {
-    background: #1b1d1e;
+    background: rgba(27, 29, 30, 0.7);
     color: #6e6e6e;
     border-radius: 0;
     border: 1px solid #4d4f4c;
@@ -23,18 +23,20 @@ window#waybar {
     padding: 5px;
     margin: 5px;
     border-radius: 0;
+    border: 1px solid #282b2c;
     background: #0E1415;
     color: #6e6e6e;
 }
 
 #workspaces button.active {
-    background: #4d4f4c;
+    background: #761F30;
+    border: 1px solid #AB2E47;
     color: #06080a;
 }
 
 #workspaces button.focused {
     color: #004F55;
-    border-top: 2px solid #002022;
+    border-top: 2px solid #AB2E47;
 }
 
 #mode {

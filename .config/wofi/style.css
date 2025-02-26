@@ -1,3 +1,6 @@
+*{
+	border: none;
+}
 window {
 	margin: 0px;
 	border: 1px solid #4d4f4c;
@@ -36,6 +39,11 @@ window {
 }
 
 #entry:selected {
+	background-color: rgba(0,0,0,0);
+	} 
+
+#entry:selected {
 	border-radius: 0;
-	background-color: #4d4f4c;
+	background-color: #761F30;
+	border: 1px solid #AB2E47;
 }
