@@ -24,6 +24,7 @@ Dependencies can be installed using `scripts/install_deps.sh` (see "Install" sec
 - [Mononoki Nerd Font](https://www.nerdfonts.com/font-downloads)
 - [Fluent-Dark GTK theme](https://github.com/vinceliuice/Fluent-gtk-theme)
 - [Bibata-Modern-Ice cursors](https://github.com/ful1e5/Bibata_Cursor)
+- [Delta](https://github.com/dandavison/delta)
 
 > **Fastfetch**, **mpv**, **ranger** and **spicetify** are not actually configured, so you might ignore them, change to your configs or just remove these directories. 
 These apps are **not** included in the install script.

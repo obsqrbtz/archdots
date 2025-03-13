@@ -22,6 +22,7 @@ sudo pacman -S stow \
 	waybar \
 	mako \
 	kitty \
+  git-delta \
 	ttf-mononoki-nerd --noconfirm &&
 
 git clone https://aur.archlinux.org/swww.git ~/swww &&
