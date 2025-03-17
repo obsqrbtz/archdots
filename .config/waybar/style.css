@@ -1,8 +1,8 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: "GohuFont 14 NerdFont Mono";
-    font-weight: normal;
+    font-family: "SF Mono Nerd Font Mono";
+    font-weight: bold;
     font-size: 14px;
     min-height: 0;
 }
@@ -16,7 +16,6 @@ window#waybar {
 
 #window {
     font-weight: bold;
-    font-family: "Mononoki Nerd Font";
 }
 
 #workspaces button {
