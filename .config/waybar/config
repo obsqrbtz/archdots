@@ -11,7 +11,7 @@
     "modules-right": ["pulseaudio", "cpu", "memory", "tray", "clock"],
 
     "mpd": {
-    "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ",
+    "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S})",
     "format-disconnected": "Disconnected ",
     "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ",
     "interval": 10,
@@ -19,7 +19,7 @@
         "on": " "
     },
     "random-icons": {
-        "off": "<span color=\"#f53c3c\"></span> ",
+        "off": " ",
         "on": "<span color=\"#2ca841\"></span> "
     },
     "repeat-icons": {
@@ -30,7 +30,7 @@
     },
     "state-icons": {
         "paused": "",
-        "playing": ""
+        "playing": "<span color=\"#2ca841\"></span> "
     },
     "tooltip-format": "MPD (connected)",
     "tooltip-format-disconnected": "MPD (disconnected)"
@@ -45,7 +45,7 @@
   },
 
     "tray": {
-        // "icon-size": 21,
+        "icon-size": 16,
         "spacing": 10
     },
     "clock": {
