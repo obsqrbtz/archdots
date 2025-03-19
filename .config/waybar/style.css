@@ -1,14 +1,14 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: "SFMono Nerd Font Mono";
+    font-family: "SauceCodePro Nerd Font Mono";
     font-weight: bold;
     font-size: 13px;
     min-height: 0;
 }
 
 window#waybar {
-    background: rgba(27, 29, 30, 0.7);
+    background: rgba(27, 29, 30, 0.95);
     color: #6e6e6e;
     border-radius: 0;
     border: 1px solid #4d4f4c;
@@ -49,7 +49,7 @@ window#waybar {
 #memory,
 #network,
 #pulseaudio,
-#custom-audio,
+#custom-notification,
 #tray,
 #mode {
     font-family: "Mononoki Nerd Font Propo";
@@ -58,8 +58,7 @@ window#waybar {
     margin: 0 2px;
 }
 
-#clock {
-    font-weight: bold;
+#custom-notification {
     margin: 0 10px;
 }
 
@@ -82,3 +81,5 @@ window#waybar {
 #custom-audio {
     color: #4d4f4c;
 }
+
+

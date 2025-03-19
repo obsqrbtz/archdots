@@ -7,8 +7,29 @@
 		"margin-left": 0,
 		"margin-right": 0,
     "modules-left": ["hyprland/workspaces"],
-		"modules-center": ["custom/audio", "mpd"],
-    "modules-right": ["pulseaudio", "cpu", "memory", "tray", "clock"],
+		"modules-center": ["custom/audio"],
+    "modules-right": ["pulseaudio", "cpu", "memory", "tray", "clock", "custom/notification"],
+
+  "custom/notification": {
+    "tooltip": false,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "<span foreground='red'><sup></sup></span>",
+      "none": "",
+      "dnd-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-none": "",
+      "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "inhibited-none": "",
+      "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-inhibited-none": ""
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
 
     "mpd": {
     "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S})",

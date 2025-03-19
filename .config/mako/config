@@ -9,6 +9,6 @@ margin=25,25,25,25
 max-icon-size=64
 default-timeout=5000
 ignore-timeout=1
-font=SF Mono Nerd Font Mono
+font=SauceCodePro Nerd Font Mono
 background-color=#761F30
 text-color=#ffffff

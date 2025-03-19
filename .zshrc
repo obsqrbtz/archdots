@@ -24,3 +24,14 @@ alias yay-clean="yay -Scc"
 function rgdelta() {
     rg --json -C 2 "$1" | delta
 }
+
+function notify_test() {
+    notify-send "Test Notification" "Some text to test out the notification daemon" \
+        --urgency=critical \
+        --expire-time=10000 \
+        --icon=dialog-information \
+        --hint=string:x-canonical-private-synchronous:anything \
+        --hint=int:transient:1 \
+        --category=im.received \
+        --action=default="OK",cancel="Dismiss"
+}
