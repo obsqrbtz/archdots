@@ -415,6 +415,7 @@
   padding: 8px;
   margin: 8px;
   border-radius: 12px;
+  font-family: Mononoki Nerd Font Propo;
   background-color: @noti-bg;
 }
 
@@ -425,6 +426,7 @@
 
 .widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked {
   /* style given to the active toggle button */
+  
 }
 
 /* Menubar widget */
@@ -460,11 +462,13 @@
   padding: 8px;
   margin: 8px;
   border-radius: 12px;
+  font-family: Mononoki Nerd Font Propo;
 }
 
 .widget-volume > box > button {
   background: transparent;
   border: none;
+  font-size: 14px;
 }
 
 .per-app-volume {

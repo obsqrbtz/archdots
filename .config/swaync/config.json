@@ -76,7 +76,7 @@
           "label": "VPN",
           "type": "toggle",
           "active": true,
-          "command": "sh -c '[[ $SWAYNC_TOGGLE_STATE == true ]] && nmcli connection up dan || nmcli connection down dan'",
+          "command": "sh -c '[[ $SWAYNC_TOGGLE_STATE == true ]] && nmcli connection up timeweb || nmcli connection down timeweb'",
           "update-command": "sh -c 'nmcli -t -f TYPE,STATE connection show --active | grep -q '^wireguard:activated' && echo true || echo false'"
       },
         {
