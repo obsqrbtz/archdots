@@ -1,7 +1,7 @@
 @define-color accent_dark #761F30;
 @define-color accent_light #AB2E47;
-@define-color bg #1b1d1e;
-@define-color input_bg #1b1d1e;
+@define-color bg #000000;
+@define-color input_bg #000000;
 @define-color border #4d4f4c;
 @define-color fg #dadad5;
 

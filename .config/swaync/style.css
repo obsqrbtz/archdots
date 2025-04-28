@@ -1,8 +1,8 @@
-@define-color cc-bg rgba(27, 29, 30, 1.0);
+@define-color cc-bg rgba(0, 0, 0, 1.0);
 @define-color noti-border-color rgba(255, 255, 255, 0.15);
-@define-color noti-bg rgba(27, 29, 30, 0.8);
-@define-color noti-bg-opaque rgb(27, 29, 30);
-@define-color noti-bg-darker rgb(38, 38, 38);
+@define-color noti-bg rgba(0, 0, 0, 1.0);
+@define-color noti-bg-opaque rgb(0, 0, 0);
+@define-color noti-bg-darker rgb(0, 0, 0);
 @define-color noti-bg-hover rgb(56, 56, 56);
 @define-color noti-bg-hover-opaque rgb(56, 56, 56);
 @define-color noti-bg-focus rgba(68, 68, 68, 0.6);
