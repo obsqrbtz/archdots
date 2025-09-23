@@ -1,0 +1,34 @@
+MenuBar=Disabled
+
+[ContentDisplay]
+UseShortRelativeDates=false
+
+[DetailsMode]
+PreviewSize=22
+
+[General]
+ShowFullPath=true
+Version=202
+ViewPropsTimestamp=2025,8,5,17,56,30.394
+
+[IconsMode]
+PreviewSize=224
+
+[InformationPanel]
+dateFormat=ShortFormat
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+
+[MainWindow]
+MenuBar=Disabled
+
+[PreviewSettings]
+Plugins=appimagethumbnail,audiothumbnail,avif,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,jxl,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,librsvg,svgthumbnail,gdk-pixbuf-thumbnailer
+
+[UiSettings]
+ColorScheme=matugen
+
+[ViewPropertiesDialog]
+1920x1080 screen: Window-Maximized=true
