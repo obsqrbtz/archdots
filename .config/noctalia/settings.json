@@ -133,7 +133,7 @@
         "useFahrenheit": false
     },
     "matugen": {
-        "enableUserTemplates": false,
+        "enableUserTemplates": true,
         "foot": false,
         "fuzzel": false,
         "ghostty": false,
@@ -197,7 +197,7 @@
             {
                 "directory": "/home/dan/Pictures/walls",
                 "name": "HDMI-A-1",
-                "wallpaper": "/home/dan/Pictures/walls/a_tree_and_a_rock.png"
+                "wallpaper": "/home/dan/Pictures/walls/backiee-309941-landscape.jpg"
             }
         ],
         "randomEnabled": false,
