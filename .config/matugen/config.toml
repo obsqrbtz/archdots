@@ -1,6 +1,11 @@
 [config]
 version_check = false
 
+[config.custom_colors]
+red = "#ff0000"
+orange = "#FFA500"
+green = "#00ff00"
+
 [templates.hyprland]
 input_path = '~/.config/matugen/templates/hyprland/colors.conf'
 output_path = '~/.config/hypr/hyprland/colors.conf'
@@ -60,3 +65,6 @@ post_hook = 'pywalfox update'
 input_path = "templates/vscode-color-theme.json"
 output_path = "~/.vscode/extensions/hyprluna.hyprluna-theme-1.0.2/themes/hyprluna.json"
 
+[templates.nvim]
+input_path = "./templates/nvim-colors.lua"
+output_path = "~/.config/nvim/colors/matugen.lua"
