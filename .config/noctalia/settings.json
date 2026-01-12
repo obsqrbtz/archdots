@@ -101,8 +101,8 @@
     },
     "colorSchemes": {
         "darkMode": true,
-        "predefinedScheme": "Monochrome",
-        "useWallpaperColors": true
+        "predefinedScheme": "clrsync",
+        "useWallpaperColors": false
     },
     "dock": {
         "autoHide": false,
@@ -146,7 +146,7 @@
         "vesktop": false
     },
     "network": {
-        "bluetoothEnabled": true,
+        "bluetoothEnabled": false,
         "wifiEnabled": false
     },
     "nightLight": {
@@ -161,7 +161,7 @@
     "notifications": {
         "criticalUrgencyDuration": 15,
         "doNotDisturb": false,
-        "lastSeenTs": 1758665565000,
+        "lastSeenTs": 1768241029000,
         "lowUrgencyDuration": 3,
         "monitors": [
         ],
@@ -197,7 +197,7 @@
             {
                 "directory": "/home/dan/Pictures/walls",
                 "name": "HDMI-A-1",
-                "wallpaper": "/home/dan/Pictures/walls/backiee-309941-landscape.jpg"
+                "wallpaper": "/home/dan/Pictures/walls/wallhaven-1pq6eg.jpg"
             }
         ],
         "randomEnabled": false,
