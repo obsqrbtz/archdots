@@ -4,3 +4,6 @@
 [submodule ".config/quickshell"]
 	path = .config/quickshell
 	url = https://github.com/obsqrbtz/basedgoose.shell.git
+[submodule ".config/quickshell/basedgoose.shell"]
+	path = .config/quickshell/basedgoose.shell
+	url = https://github.com/obsqrbtz/basedgoose.shell.git
