@@ -36,7 +36,7 @@ Arch config backup
 > If there are existing configs in home directory, rename or remove it first. Otherwise `stow` will fail to create the symlinks.
 
 ```bash
-git clone https://github.com/obsqrbtz/archdots.git ~/.dotfiles
+git clone https://github.com/obsqrbtz/archdots.git --recurse-submodules ~/.dotfiles
 cd ~/.dotfiles
 rm .gitconfig #(alternatively, put your git configuratiuon in this file)
 stow -R -v -t ~ .
