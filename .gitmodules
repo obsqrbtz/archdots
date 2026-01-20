@@ -1,3 +1,6 @@
 [submodule ".config/waybar/wireguard-manager"]
 	path = .config/waybar/wireguard-manager
 	url = https://github.com/obsqrbtz/wireguard-manager.git
+[submodule ".config/quickshell"]
+	path = .config/quickshell
+	url = https://github.com/obsqrbtz/basedgoose.shell.git
