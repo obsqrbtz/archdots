@@ -8,16 +8,19 @@ Arch config backup
 
 - stow
 - inotify-tools
-- playerctl
 - Hyprland
-- rofi
-- kitty
-- dolphin
-- pavucontrol
+- quickshell
+- awww
+- pamixer
+- zenity
 - kvantum
 - qt5ct
 - qt6ct
 - adw-gtk3
+- fd
+- wl-clipboard
+- curl
+- imagemagick
 
 ## Install
 
