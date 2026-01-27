@@ -1,0 +1,83 @@
+[general]
+default_theme = 'dark'
+font = 'JetBrainsMono Nerd Font Mono'
+font_size = 14
+palettes_path = '~/.config/clrsync/palettes'
+
+[templates.firefox]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/userChrome.css'
+output_path = '/home/dan/.mozilla/firefox/pvzetq2b.default-release/chrome/userChrome.css'
+reload_cmd = ''
+
+[templates.gtk3]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/gtk.css'
+output_path = '/home/dan/.config/gtk-3.0/colors.css'
+reload_cmd = '~/.config/hypr/scripts/gtk.sh'
+
+[templates.gtk4]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/gtk.css'
+output_path = '/home/dan/.config/gtk-4.0/colors.css'
+reload_cmd = ''
+
+[templates.hyprland]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/hyprland.conf'
+output_path = '/home/dan/.config/hypr/hyprland/clrsync.conf'
+reload_cmd = ''
+
+[templates.kitty]
+enabled = true
+input_path = '~/.config/clrsync/templates/kitty.conf'
+output_path = '~/.config/kitty/kitty_test.conf'
+reload_cmd = 'pkill -SIGUSR1 kitty'
+
+[templates.kvantum]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/kvantum/kvantum.kvconfig'
+output_path = '/home/dan/.config/Kvantum/clrsync/clrsync.kvconfig'
+reload_cmd = ''
+
+[templates.kvantum-svg]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/kvantum/kvantum.svg'
+output_path = '/home/dan/.config/Kvantum/clrsync/clrsync.svg'
+reload_cmd = ''
+
+[templates.nvim]
+enabled = true
+input_path = '~/.config/clrsync/templates/nvim.lua'
+output_path = '~/.config/nvim/colors/clrsync.lua'
+reload_cmd = ''
+
+[templates.qt5ct]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/qtct.conf'
+output_path = '/home/dan/.config/qt6ct/colors/clrsync.conf'
+reload_cmd = ''
+
+[templates.qt6ct]
+enabled = true
+input_path = '/home/dan/.config/clrsync/templates/qtct.conf'
+output_path = '/home/dan/.config/qt6ct/colors/clrsync.conf'
+reload_cmd = ''
+
+[templates.quickshell]
+enabled = false
+input_path = '/home/dan/.config/clrsync/templates/quickshell.qml'
+output_path = '/home/dan/.config/quickshell/basedgoose.shell/Commons/Theme.qml'
+reload_cmd = ''
+
+[templates.telegram]
+enabled = true
+input_path = '~/.config/clrsync/templates/telegram.tdesktop-theme'
+output_path = '~/clrsync.tdesktop-theme'
+reload_cmd = ''
+
+[templates.vscode]
+enabled = true
+input_path = '~/.config/clrsync/templates/code.json'
+output_path = '~/.vscode/extensions/obsqrbtz.clrsync-1.0.2/themes/clrsync-color-theme.json'
+reload_cmd = ''

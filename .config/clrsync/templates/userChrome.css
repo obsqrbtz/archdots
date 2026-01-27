@@ -1,0 +1,109 @@
+/* clrsync Firefox Theme */
+/* Place in: <Firefox Profile>/chrome/userChrome.css */
+/* Enable: about:config -> toolkit.legacyUserProfileCustomizations.stylesheets = true */
+
+:root {
+  --lwt-accent-color: {background} !important;
+  --lwt-text-color: {foreground} !important;
+
+  --toolbar-bgcolor: {surface} !important;
+  --toolbar-color: {on_surface} !important;
+  --toolbarbutton-hover-background: {surface_variant} !important;
+  --toolbarbutton-active-background: {border_focused} !important;
+  --toolbarbutton-icon-fill: {on_surface} !important;
+
+  --tab-selected-bgcolor: {surface} !important;
+  --tab-selected-textcolor: {foreground} !important;
+  --tab-loading-fill: {accent} !important;
+  --lwt-tab-text: {foreground} !important;
+  --tab-line-color: {accent} !important;
+
+  --urlbar-box-bgcolor: {surface_variant} !important;
+  --urlbar-box-text-color: {on_surface} !important;
+  --urlbar-box-hover-bgcolor: {surface} !important;
+  --urlbar-box-focus-bgcolor: {surface} !important;
+  --urlbar-popup-url-color: {editor_link} !important;
+
+  --arrowpanel-background: {surface} !important;
+  --arrowpanel-color: {on_surface} !important;
+  --arrowpanel-border-color: {border} !important;
+  --panel-separator-color: {border} !important;
+
+  --sidebar-background-color: {background} !important;
+  --sidebar-text-color: {foreground} !important;
+  --sidebar-border-color: {border} !important;
+
+  --toolbar-field-focus-background-color: {surface} !important;
+  --toolbar-field-focus-color: {on_surface} !important;
+  --toolbar-field-focus-border-color: {accent} !important;
+}
+
+#TabsToolbar {
+  background-color: {background} !important;
+}
+
+.tab-background[selected="true"] {
+  background-color: {surface} !important;
+}
+
+.tabbrowser-tab:hover > .tab-stack > .tab-background:not([selected="true"]) {
+  background-color: {surface_variant} !important;
+}
+
+.tab-line {
+  background-color: {accent} !important;
+}
+
+#nav-bar {
+  background-color: {surface} !important;
+}
+
+#urlbar-background {
+  background-color: {surface_variant} !important;
+  border-color: {border} !important;
+}
+
+#urlbar[focused="true"] > #urlbar-background {
+  background-color: {surface} !important;
+  border-color: {accent} !important;
+}
+
+#urlbar-input {
+  color: {on_surface} !important;
+}
+
+#PersonalToolbar {
+  background-color: {surface} !important;
+}
+
+menupopup, panel {
+  --panel-background: {surface} !important;
+  --panel-color: {on_surface} !important;
+}
+
+menupopup {
+  background-color: {surface} !important;
+  color: {on_surface} !important;
+}
+
+menuitem:hover, menu:hover {
+  background-color: {surface_variant} !important;
+}
+
+#sidebar-box {
+  background-color: {background} !important;
+}
+
+#sidebar-header {
+  background-color: {surface} !important;
+  border-bottom-color: {border} !important;
+}
+
+findbar {
+  background-color: {surface} !important;
+  color: {on_surface} !important;
+}
+
+* {
+  scrollbar-color: {surface_variant} {background} !important;
+}

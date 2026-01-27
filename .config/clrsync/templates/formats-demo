@@ -1,0 +1,36 @@
+# BASE COLORS (raw)
+color1.raw                  {base01}
+
+# HEX
+color1.hex                  {base01.hex}
+color1.hex.stripped         {base01.hex_stripped}
+
+color1.hexa                 {base01.hexa}
+color1.hexa.stripped        {base01.hexa_stripped}
+
+# RGB (0–255)
+color1.rgb                  {base01.rgb}
+color1.r                    {base01.r}
+color1.g                    {base01.g}
+color1.b                    {base01.b}
+
+# RGBA (A = 0–1 normalized)
+color1.rgba                 {base01.rgba}
+color1.a                    {base01.a}
+
+# HSL (normalized 0–1 for s,l, integers for h)
+color1.hsl                  {base01.hsl}
+color1.h                    {base01.h}
+color1.s                    {base01.s}
+color1.l                    {base01.l}
+
+# HSLA
+color1.hsla                 {base01.hsla}
+color1.hsla_a               {base01.hsla_a}
+
+# Combined custom formats
+color1.r-g-b                {base01.r}-{base01.g}-{base01.b}
+color1.r-g-b-a              {base01.r}-{base01.g}-{base01.b}-{base01.a}
+
+color1.h-s-l                {base01.h}-{base01.s}-{base01.l}
+color1.h-s-l-a              {base01.h}-{base01.s}-{base01.l}-{base01.hsla_a}

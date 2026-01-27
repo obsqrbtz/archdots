@@ -1,0 +1,213 @@
+// Template mostly stolen from noctalia-shell 
+// https://github.com/noctalia-dev/noctalia-shell/blob/main/Assets/MatugenTemplates/telegram.tdesktop-theme
+
+COLOR_GRAY: {border};
+COLOR_DARK: {surface_variant};
+
+windowBg: {background}; // Main background
+windowFg: {on_background}; // Main text
+windowBgOver: {surface_variant}; // Generic background on hover
+windowBgRipple: {surface_variant}; // Ripple effect
+windowFgOver: {on_surface_variant}; // Text on hover
+windowSubTextFg: {foreground}60; // Minor text
+windowSubTextFgOver: {foreground}80; // Minor text on hover
+
+dialogsBg: {background}; // Sidebar background
+dialogsBgActive: {surface}; // Active chat background
+dialogsBgOver: {surface_variant}; // Hover background
+dialogsRippleBg: {surface_variant}; // Ripple effect
+dialogsRippleBgActive: {surface_variant}; // Ripple effect for active chat
+
+dialogsNameFg: {foreground}; // Chat name
+dialogsNameFgActive: {foreground}; // Chat name for active chat
+dialogsNameFgOver: {foreground}; // Chat name on hover
+
+dialogsTextFg: {foreground}; // Message preview
+dialogsTextFgActive: {foreground}; // Message preview for active chat
+dialogsTextFgOver: {foreground}; // Message preview on hover
+
+dialogsTextFgService: {foreground}; // Service text (group sender name)
+dialogsTextFgServiceActive: {foreground}; // Service text for active chat
+dialogsTextFgServiceOver: {foreground}; // Service text on hover
+
+dialogsDateFg: {foreground}60; // Date text
+dialogsDateFgActive: {foreground}60; // Date text for active chat
+dialogsDateFgOver: {foreground}60; // Date text on hover
+
+dialogsDraftFg: {foreground}; // Draft label
+dialogsDraftFgActive: {foreground}; // Draft label for active chat
+dialogsDraftFgOver: {foreground}; // Draft label on hover
+
+dialogsVerifiedIconBg: {accent}; // Verified badge background
+dialogsVerifiedIconBgActive: {accent_secondary}; // Verified badge for active chat
+dialogsVerifiedIconBgOver: {accent}; // Verified badge on hover
+dialogsVerifiedIconFg: {background}; // Verified icon
+dialogsVerifiedIconFgActive: {background}; // Verified icon for active chat
+dialogsVerifiedIconFgOver: {background}; // Verified icon on hover
+
+dialogsSendingIconFg: {foreground}; // Sending icon (clock)
+dialogsSendingIconFgActive: {foreground}; // Sending icon for active chat
+dialogsSendingIconFgOver: {foreground}; // Sending icon on hover
+
+dialogsSentIconFg: {accent}; // Sent icon (tick)
+dialogsSentIconFgActive: {accent_secondary}; // Sent icon for active chat
+dialogsSentIconFgOver: {accent}; // Sent icon on hover
+
+dialogsUnreadBg: {accent}; // Unread badge background
+dialogsUnreadBgActive: {accent_secondary}; // Unread badge for active chat
+dialogsUnreadBgOver: {accent}; // Unread badge on hover
+dialogsUnreadBgMuted: {foreground}; // Muted unread badge
+dialogsUnreadBgMutedActive: {foreground}; // Muted unread badge for active chat
+dialogsUnreadBgMutedOver: {foreground}; // Muted unread badge on hover
+dialogsUnreadFg: {background}; // Unread badge text
+dialogsUnreadFgActive: {background}; // Unread badge text for active chat
+dialogsUnreadFgOver: {background}; // Unread badge text on hover
+
+dialogsChatIconFg: {foreground}; // Group/channel icon
+dialogsChatIconFgActive: {foreground}; // Group/channel icon for active chat
+dialogsChatIconFgOver: {foreground}; // Group/channel icon on hover
+
+dialogsOnlineBadgeFg: {foreground}; // Online status
+dialogsOnlineBadgeFgActive: {foreground}; // Online status for active chat
+
+dialogsForwardBg: {surface}; // Forwarding panel background
+dialogsForwardFg: {foreground}; // Forwarding panel text
+
+dialogsMenuIconFg: {foreground}; // Main menu icon
+dialogsMenuIconFgOver: {foreground}60; // Main menu icon on hover
+windowBoldFg: {on_background}; // Bold text
+windowBoldFgOver: {on_surface_variant}; // Bold text on hover
+windowBgActive: {surface}; // Active items background
+windowFgActive: {foreground}; // Active items text
+windowActiveTextFg: {accent_secondary}; // Active items text
+windowShadowFg: {border}; // Window shadow
+windowShadowFgFallback: {border}; // Fallback for shadow
+historyOutIconFg: {accent};
+historyIconFgInverted: {on_surface};
+
+msgServiceBg: {surface}80;
+msgServiceFg: {foreground};
+msgOutBg: {surface};
+msgOutBgSelected: {surface_variant};
+msgOutServiceFg: {on_surface};
+msgOutDateFg: {foreground}80;
+historySentIconFg: {foreground};
+msgOutDateFgSelected: {foreground};
+msgInBg: {surface_variant};
+msgInBgSelected: {surface};
+msgDateImgFg: {on_surface};
+
+
+shadowFg: {border}; // General shadow
+slideFadeOutBg: {background};
+slideFadeOutShadowFg: {border};
+
+imageBg: {surface};
+imageBgTransparent: {surface};
+
+activeButtonBg: {accent_secondary}; // Active button background
+activeButtonBgOver: {surface_variant}; // Active button hover background
+activeButtonBgRipple: {on_surface_variant}; // Active button ripple
+activeButtonFg: {on_background}; // Active button text
+activeButtonFgOver: {on_surface_variant}; // Active button hover text
+activeButtonSecondaryFg: {on_background}; // Active button secondary text
+activeButtonSecondaryFgOver: {on_surface_variant}; // Active button secondary hover text
+activeLineFg: {accent};
+dialogsBgActive: {surface};
+
+lightButtonBg: {surface}; // Light button background
+lightButtonBgOver: {surface_variant}; // Light button hover background
+lightButtonBgRipple: {accent}; // Light button ripple
+lightButtonFg: {on_surface}; // Light button text
+lightButtonFgOver: {on_surface_variant}; // Light button hover text
+
+attentionButtonFg: {error};
+attentionButtonFgOver: {error};
+attentionButtonBgOver: {surface_variant};
+attentionButtonBgRipple: {on_surface};
+
+outlineButtonBg: {surface}; // Outline button background
+outlineButtonBgOver: {surface_variant}; // Outline button hover background
+outlineButtonOutlineFg: {accent_secondary}; // Outline button color
+outlineButtonBgRipple: {accent_secondary}; // Outline button ripple
+
+menuBg: {surface};
+menuBgOver: {surface_variant};
+menuBgRipple: {accent_secondary};
+menuIconFg: {on_surface};
+menuIconFgOver: {on_surface_variant};
+menuSubmenuArrowFg: {border};
+menuFgDisabled: {border};
+menuSeparatorFg: {border};
+
+scrollBarBg: {accent}40; // Scroll bar background (40% opacity)
+scrollBarBgOver: {accent_secondary}60; // Scroll bar hover background (60% opacity)
+scrollBg: {surface_variant}40; // Scroll bar track (40% opacity)
+scrollBgOver: {surface_variant}60; // Scroll bar track on hover (60% opacity)
+
+smallCloseIconFg: {border};
+smallCloseIconFgOver: {on_surface_variant};
+
+radialFg: {accent_secondary};
+radialBg: {surface};
+
+placeholderFg: {border}; // Placeholder text
+placeholderFgActive: {accent_secondary}; // Active placeholder text
+inputBorderFg: {border}; // Input border
+filterInputBorderFg: {border}; // Search input border
+filterInputInactiveBg: {surface}; // Inactive search input background
+checkboxFg: {accent_secondary}; // Checkbox color
+
+// Filters sidebar (left side bar with folder filters)
+sideBarBg: {surface}; // Filters sidebar background
+sideBarBgActive: {surface_variant}; // Filters sidebar active filter background
+sideBarBgRipple: {background}; // Filters sidebar ripple effect
+sideBarTextFg: {foreground}; // Filters sidebar text
+sideBarTextFgActive: {foreground}; // Filters sidebar active filter text
+sideBarIconFg: {foreground}; // Filters sidebar icon
+sideBarIconFgActive: {foreground}; // Filters sidebar active filter icon
+sideBarBadgeBg: {accent}; // Filters sidebar badge background
+sideBarBadgeBgMuted: {foreground}60; // Filters sidebar muted badge background
+
+titleBg: {surface}; // Window title background
+titleShadow: {border};
+titleButtonFg: {on_surface}; // Title button color
+titleButtonBgOver: {surface_variant}; // Title button hover background
+titleButtonFgOver: {on_surface_variant}; // Title button hover color
+titleButtonCloseBgOver: {error};
+titleButtonCloseFgOver: {on_error};
+titleFgActive: {on_surface}; // Active title text
+titleFg: {on_surface}; // Inactive title text
+
+trayCounterBg: {error}; // Tray counter background
+trayCounterBgMute: {border}; // Muted tray counter background
+trayCounterFg: {on_error}; // Tray counter text
+trayCounterBgMacInvert: {error}; // Mac tray counter
+trayCounterFgMacInvert: {on_error}; // Mac tray counter text
+
+layerBg: {surface}99; // Layer background (60% opacity)
+
+cancelIconFg: {error}; // Cancel icon
+cancelIconFgOver: {error}; // Cancel icon on hover
+
+boxBg: {surface}; // Box background
+boxTextFg: {on_surface}; // Box text
+boxTextFgGood: {accent_secondary}; // Box good text
+boxTextFgError: {error}; // Box error text
+boxTitleFg: {on_surface}; // Box title text
+boxSearchBg: {surface}; // Box search field background
+boxSearchCancelIconFg: {error}; // Box search cancel icon
+boxSearchCancelIconFgOver: {error}; // Box search cancel icon on hover
+
+contactsBg: {surface}; // Contacts background
+contactsBgOver: {surface_variant}; // Contacts background on hover
+contactsNameFg: {on_surface}; // Contact name
+contactsStatusFg: {border}; // Contact status
+contactsStatusFgOver: {on_surface_variant}; // Contact status on hover
+contactsStatusFgOnline: {accent_secondary}; // Online contact status
+
+photoCropFadeBg: {surface}cc; // Photo crop fade background
+photoCropPointFg: {accent_secondary}; // Photo crop points
+
+chat_inBubbleSelected: {surface_variant}; // inbox selected chat background
+chat_outBubbleSelected: {surface_variant}; // outbox selected chat background

@@ -1,0 +1,5 @@
+{
+  "wallpaperDirectory": "/home/dan/Pictures/walls",
+  "wallpaperResizeMode": "crop",
+  "hyprlandMonitorsConfigPath": "~/.config/hypr/hyprland/monitors.conf"
+}

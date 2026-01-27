@@ -7,3 +7,6 @@
 [submodule ".config/quickshell/basedgoose.shell"]
 	path = .config/quickshell/basedgoose.shell
 	url = https://github.com/obsqrbtz/basedgoose.shell.git
+[submodule ".config/nvim"]
+	path = .config/nvim
+	url = https://github.com/obsqrbtz/basedgoose.nvim.git
