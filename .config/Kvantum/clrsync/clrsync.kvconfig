@@ -89,7 +89,7 @@ inactive.highlight.color=#9A8C98
 text.color=#F2E9E4
 window.text.color=#F2E9E4
 button.text.color=#F2E9E4
-disabled.text.color=#4A4E69
+disabled.text.color={editor_disabled}
 tooltip.text.color=#F2E9E4
 highlight.text.color=#F2E9E4
 link.color=#F2E9E4
@@ -568,4 +568,4 @@ frame.element=window
 frame.bottom=10
 frame.top=10
 
-text.disabled.color=#4A4E69
+text.disabled.color={editor_disabled}

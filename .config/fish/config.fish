@@ -3,6 +3,7 @@ if status is-interactive
 end
 
 set -x CMAKE_GENERATOR Ninja
+set -x GITLAB_HOME /srv/gitlab
 
 alias disable-tv="hyprctl keyword monitor HDMI-A-2, disable"
 
@@ -34,3 +35,6 @@ alias yas="yay -Slq | fzf --multi --preview 'yay -Si {1}' --preview-window=right
 alias yaq="yay -Qq | fzf --multi --preview 'yay -Qi {1}' --preview-window=right:60%"
 # AUR only
 alias yaqm="yay -Qm | awk '{print $1}' | fzf --multi --preview 'yay -Qi {1}' --preview-window=right:60%"
+
+# opencode
+fish_add_path /home/dan/.opencode/bin

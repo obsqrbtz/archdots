@@ -1,6 +1,6 @@
 [general]
 default_theme = 'dark'
-font = 'JetBrainsMono Nerd Font Mono'
+font = 'MonaspiceNe Nerd Font'
 font_size = 14
 palettes_path = '~/.config/clrsync/palettes'
 
@@ -65,7 +65,7 @@ output_path = '/home/dan/.config/qt6ct/colors/clrsync.conf'
 reload_cmd = ''
 
 [templates.quickshell]
-enabled = false
+enabled = true
 input_path = '/home/dan/.config/clrsync/templates/quickshell.qml'
 output_path = '/home/dan/.config/quickshell/basedgoose.shell/Commons/Theme.qml'
 reload_cmd = ''
@@ -78,6 +78,6 @@ reload_cmd = ''
 
 [templates.vscode]
 enabled = true
-input_path = '~/.config/clrsync/templates/code.json'
-output_path = '~/.vscode/extensions/obsqrbtz.clrsync-1.0.2/themes/clrsync-color-theme.json'
+input_path = '/home/dan/.config/clrsync/templates/code.json'
+output_path = '/home/dan/.vscode/extensions/obsqrbtz.clrsync-1.0.2/themes/clrsync-color-theme.json'
 reload_cmd = ''
