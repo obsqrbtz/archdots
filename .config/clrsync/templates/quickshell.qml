@@ -28,8 +28,11 @@ QtObject {
     readonly property string fontUI: "Inter"
     readonly property string fontIcon: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
-    readonly property int radius: 8
+    readonly property int radius: 0
+    readonly property int radiusSm: Math.round(radius * 0.5)
+    readonly property int radiusLg: radius * 2
 }
+
 
 
 
