@@ -1,4 +1,5 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
+SETUVAR --export --path PATH:/home/dan/\x2edotnet/tools\x1e/home/dan/\x2edotnet/tools\x1e/home/dan/go/bin\x1e/home/dan/\x2eopencode/bin\x1e/opt/rocm/bin\x1e/home/dan/\x2elocal/bin\x1e/home/dan/\x2ecargo/bin\x1e/usr/local/bin\x1e/usr/bin
 SETUVAR __fish_initialized:4300
-SETUVAR fish_user_paths:/home/dan/\x2eopencode/bin
+SETUVAR fish_user_paths:/home/dan/go/bin\x1e/home/dan/\x2eopencode/bin

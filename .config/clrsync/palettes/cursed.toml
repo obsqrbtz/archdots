@@ -99,7 +99,7 @@ on_surface_variant = '#CCCCCCFF'
 on_warning = '#151515FF'
 success = '#95A328FF'
 surface = '#1C1C1CFF'
-surface_variant = '#1C1C1CFF'
+surface_variant = '#262626FF'
 warning = '#E1C135FF'
 
 [general]

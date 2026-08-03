@@ -4,7 +4,7 @@ MenuBar=Disabled
 UseShortRelativeDates=false
 
 [DetailsMode]
-PreviewSize=22
+PreviewSize=16
 
 [General]
 ShowFullPath=true
@@ -12,7 +12,7 @@ Version=202
 ViewPropsTimestamp=2025,8,5,17,56,30.394
 
 [IconsMode]
-PreviewSize=112
+PreviewSize=48
 
 [InformationPanel]
 dateFormat=ShortFormat

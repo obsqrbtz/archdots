@@ -28,13 +28,21 @@ QtObject {
     readonly property string fontUI: "Inter"
     readonly property string fontIcon: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
-    readonly property int radius: 0
+    readonly property int fontSizeHeading: 18
+    readonly property int fontSizeSubheading: 14
+    readonly property int fontSizeCaption: 11
+    readonly property int radius: 6
     readonly property int radiusSm: Math.round(radius * 0.5)
     readonly property int radiusLg: radius * 2
+    readonly property int radiusPanel: 12
+    readonly property int spacingXs: 4
+    readonly property int spacingSm: 8
+    readonly property int spacingMd: 12
+    readonly property int spacingLg: 16
+    readonly property int spacingXl: 20
+    readonly property real dividerOpacity: 0.4
+    readonly property real popupShadowBlur: 1.0
+    readonly property real popupShadowOffset: 10
+    readonly property real popupShadowOpacity: 0.28
 }
-
-
-
-
-
 

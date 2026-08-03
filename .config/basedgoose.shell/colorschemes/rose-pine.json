@@ -1,0 +1,18 @@
+{
+  "name": "Rosé Pine",
+  "background": "#191724",
+  "surfaceBase": "#1F1D2E",
+  "surfaceContainer": "#26233A",
+  "border": "#403D52",
+  "surfaceBorder": "#2A2837",
+  "foreground": "#E0DEF4",
+  "foregroundMuted": "#6E6A86",
+  "primary": "#9CCFD8",
+  "primaryMuted": "#13201F",
+  "secondary": "#EBBCBA",
+  "secondaryMuted": "#2A1F22",
+  "info": "#C4A7E7",
+  "warning": "#F6C177",
+  "success": "#31748F",
+  "error": "#EB6F92"
+}

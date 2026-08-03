@@ -1,0 +1,37 @@
+# sway
+# https://github.com/swaywm/sway/wiki
+#
+# Split across config.d/, included at the bottom in numeric order:
+#   10-output  20-input  30-appearance  40-rules  50-keybinds  60-autostart
+#
+# Variables defined here are visible to every included file.
+
+### Applications
+set $term        ghostty
+set $filemanager nautilus
+set $menu        rofi -show drun
+set $scripts     ~/.config/sway/scripts
+
+### Modifier
+# Mod4 = Super, Mod1 = Alt
+set $mod Mod4
+
+### Directions
+set $left  h
+set $down  j
+set $up    k
+set $right l
+
+### Color fallbacks
+set $bg       #111111
+set $surface  #191919
+set $fg       #D2D2D2
+set $muted    #849899
+set $accent   #9A8652
+set $border   #242424
+set $error    #AA4E4A
+
+### Font
+set $font MonaspiceNe Nerd Font 10
+
+include ~/.config/sway/config.d/*.conf

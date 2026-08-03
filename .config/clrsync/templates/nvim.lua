@@ -25,8 +25,11 @@ local palette = {
     selection = "{editor_selection.hex}",
     dark_blue = "{editor_selection.hex}",
     line_highlight = "{editor_line_highlight.hex}",
+    folded = "{editor_folded_background.hex}",
+    selection_inactive = "{editor_selection_inactive.hex}",
 
     -- Editor - Gutter
+    gutter_bg = "{editor_gutter_background.hex}",
     line_number = "{editor_line_number.hex}",
     line_number_active = "{editor_line_number_active.hex}",
 
@@ -43,6 +46,10 @@ local palette = {
     property = "{editor_property.hex}",
     constant = "{editor_constant.hex}",
     type_ = "{editor_type.hex}",
+    class = "{editor_class.hex}",
+    interface = "{editor_interface.hex}",
+    enum = "{editor_enum.hex}",
+    namespace = "{editor_namespace.hex}",
     tag = "{editor_tag.hex}",
     punctuation = "{editor_punctuation.hex}",
     link = "{editor_link.hex}",
@@ -103,15 +110,15 @@ set_hl("EndOfBuffer", { bg = palette.bg, fg = palette.bg })
 set_hl("Visual", { bg = palette.dark_blue })
 set_hl("VisualBold", { bg = palette.dark_blue, bold = true })
 
-set_hl("LineNr", { bg = palette.bg, fg = palette.grey })
-set_hl("Cursor", { bg = palette.blue })
+set_hl("LineNr", { bg = palette.gutter_bg, fg = palette.grey })
+set_hl("Cursor", { bg = palette.cursor })
 set_hl("CursorLine", { bg = palette.bg_alt })
 set_hl("CursorLineNr", { bg = palette.bg_alt, fg = palette.fg })
 set_hl("CursorColumn", { bg = palette.bg_alt })
 
-set_hl("Folded", { bg = palette.bg_alt, fg = palette.base5 })
+set_hl("Folded", { bg = palette.folded, fg = palette.base5 })
 set_hl("FoldColumn", { bg = palette.bg, fg = palette.fg_alt })
-set_hl("SignColumn", { bg = palette.bg })
+set_hl("SignColumn", { bg = palette.gutter_bg })
 set_hl("ColorColumn", { bg = palette.bg_alt })
 
 set_hl("IndentGuide", { fg = palette.indent_guide })
@@ -123,7 +130,7 @@ set_hl("TermCursorNC", { fg = palette.fg_alt, reverse = true })
 set_hl("TermNormal", { link = "Normal" })
 set_hl("TermNormalNC", { link = "TermNormal" })
 
-set_hl("WildMenu", { bg = palette.dark_blue, fg = palette.fg })
+set_hl("WildMenu", { bg = palette.selection_inactive, fg = palette.fg })
 set_hl("Separator", { fg = palette.fg_alt })
 set_hl("VertSplit", { bg = palette.bg, fg = palette.grey })
 
@@ -137,23 +144,23 @@ set_hl("StatusLinePart", { bg = palette.bg_alt, fg = palette.base6, bold = true 
 set_hl("StatusLinePartNC", { link = "StatusLinePart" })
 
 set_hl("Pmenu", { bg = palette.bg_alt, fg = palette.fg })
-set_hl("PmenuSel", { bg = palette.blue, fg = palette.base0 })
-set_hl("PmenuSelBold", { bg = palette.blue, fg = palette.base0, bold = true })
+set_hl("PmenuSel", { bg = palette.selection, fg = palette.fg })
+set_hl("PmenuSelBold", { bg = palette.selection, fg = palette.fg, bold = true })
 set_hl("PmenuSbar", { bg = palette.bg_alt })
 set_hl("PmenuThumb", { bg = palette.grey })
 
 set_hl("FloatBorder", { fg = palette.border, bg = palette.bg })
 
 --- Search, Highlight, Conceal
-set_hl("Search", { bg = palette.dark_blue, fg = palette.fg })
+set_hl("Search", { bg = palette.search_match, fg = palette.fg })
 set_hl("Substitute", { fg = palette.red, bold = true, strikethrough = true })
-set_hl("IncSearch", { bg = palette.yellow, fg = palette.bg, bold = true })
+set_hl("IncSearch", { bg = palette.search_match_active, fg = palette.bg, bold = true })
 set_hl("IncSearchCursor", { reverse = true })
 
 set_hl("Conceal", { fg = palette.grey })
 set_hl("SpecialKey", { fg = palette.violet, bold = true })
 set_hl("NonText", { fg = palette.fg_alt, bold = true })
-set_hl("MatchParen", { fg = palette.red, bold = true })
+set_hl("MatchParen", { fg = palette.bracket_match, bold = true })
 set_hl("Whitespace", { fg = palette.whitespace })
 
 set_hl("Highlight", { bg = palette.bg_alt })
@@ -182,63 +189,63 @@ set_hl("healthSuccess", { link = "Msg" })
 set_hl("healthWarning", { link = "WarningMsg" })
 
 --- Syntax
-set_hl("Tag", { fg = palette.cyan, bold = true })
-set_hl("Link", { fg = palette.green, underline = true })
+set_hl("Tag", { fg = palette.tag, bold = true })
+set_hl("Link", { fg = palette.link, underline = true })
 set_hl("URL", { link = "Link" })
-set_hl("Underlined", { fg = palette.cyan, underline = true })
+set_hl("Underlined", { fg = palette.link, underline = true })
 
 set_hl("Comment", { fg = palette.comment, italic = true })
 set_hl("CommentBold", { fg = palette.comment, bold = true })
 set_hl("SpecialComment", { fg = palette.base7, bold = true })
 
-set_hl("Macro", { fg = palette.violet })
-set_hl("Define", { fg = palette.violet, bold = true })
-set_hl("Include", { fg = palette.violet, bold = true })
-set_hl("PreProc", { fg = palette.violet, bold = true })
-set_hl("PreCondit", { fg = palette.violet, bold = true })
+set_hl("Macro", { fg = palette.decorator })
+set_hl("Define", { fg = palette.decorator, bold = true })
+set_hl("Include", { fg = palette.decorator, bold = true })
+set_hl("PreProc", { fg = palette.decorator, bold = true })
+set_hl("PreCondit", { fg = palette.decorator, bold = true })
 
-set_hl("Label", { fg = palette.blue })
-set_hl("Repeat", { fg = palette.blue })
-set_hl("Keyword", { fg = palette.blue })
+set_hl("Label", { fg = palette.keyword })
+set_hl("Repeat", { fg = palette.keyword })
+set_hl("Keyword", { fg = palette.keyword })
 set_hl("Operator", { fg = palette.operator })
-set_hl("Delimiter", { fg = palette.blue })
-set_hl("Statement", { fg = palette.blue })
-set_hl("Exception", { fg = palette.blue })
-set_hl("Conditional", { fg = palette.blue })
+set_hl("Delimiter", { fg = palette.punctuation })
+set_hl("Statement", { fg = palette.keyword })
+set_hl("Exception", { fg = palette.keyword })
+set_hl("Conditional", { fg = palette.keyword })
 
 set_hl("Variable", { fg = palette.variable })
-set_hl("VariableBuiltin", { fg = palette.magenta, bold = true })
-set_hl("Constant", { fg = palette.violet, bold = true })
+set_hl("VariableBuiltin", { fg = palette.constant, bold = true })
+set_hl("Constant", { fg = palette.constant, bold = true })
 
-set_hl("Number", { fg = palette.orange })
+set_hl("Number", { fg = palette.number })
 set_hl("Float", { link = "Number" })
-set_hl("Boolean", { fg = palette.orange, bold = true })
-set_hl("Enum", { fg = palette.orange })
+set_hl("Boolean", { fg = palette.boolean, bold = true })
+set_hl("Enum", { fg = palette.enum })
 
-set_hl("Character", { fg = palette.violet, bold = true })
-set_hl("SpecialChar", { fg = palette.violet, bold = true })
-set_hl("String", { fg = palette.green })
+set_hl("Character", { fg = palette.constant, bold = true })
+set_hl("SpecialChar", { fg = palette.escape_char, bold = true })
+set_hl("String", { fg = palette.string })
 set_hl("StringDelimiter", { link = "String" })
 
 set_hl("Special", { fg = palette.violet })
 set_hl("SpecialBold", { fg = palette.violet, bold = true })
 
-set_hl("Field", { fg = palette.violet })
+set_hl("Field", { fg = palette.property })
 set_hl("Argument", { fg = palette.parameter })
 set_hl("Attribute", { fg = palette.attribute })
 set_hl("Identifier", { fg = palette.variable })
 set_hl("Property", { fg = palette.property })
 set_hl("Function", { fg = palette.function_ })
 set_hl("FunctionBuiltin", { fg = palette.function_, bold = true })
-set_hl("KeywordFunction", { fg = palette.blue, bold = true })
+set_hl("KeywordFunction", { fg = palette.keyword, bold = true })
 set_hl("Method", { fg = palette.function_ })
 
 set_hl("Type", { fg = palette.type_ })
-set_hl("Typedef", { fg = palette.blue })
+set_hl("Typedef", { fg = palette.type_ })
 set_hl("TypeBuiltin", { fg = palette.type_, bold = true })
-set_hl("Class", { fg = palette.blue })
-set_hl("StorageClass", { fg = palette.blue })
-set_hl("Structure", { fg = palette.blue })
+set_hl("Class", { fg = palette.class })
+set_hl("StorageClass", { fg = palette.keyword })
+set_hl("Structure", { fg = palette.class })
 
 set_hl("Regexp", { fg = palette.regex })
 set_hl("RegexpSpecial", { fg = palette.regex })
@@ -251,17 +258,17 @@ set_hl("CommentSection", { link = "CommentBold" })
 set_hl("Noise", { link = "Comment" })
 
 --- Diff
-set_hl("DiffAddedGutter", { fg = palette.green, bold = true })
-set_hl("DiffModifiedGutter", { fg = palette.orange, bold = true })
-set_hl("DiffRemovedGutter", { fg = palette.red, bold = true })
+set_hl("DiffAddedGutter", { fg = palette.diff_add, bold = true })
+set_hl("DiffModifiedGutter", { fg = palette.diff_change, bold = true })
+set_hl("DiffRemovedGutter", { fg = palette.diff_delete, bold = true })
 
 set_hl("DiffAdd", { link = "DiffAddedGutter" })
 set_hl("DiffChange", { link = "DiffModifiedGutter" })
 set_hl("DiffDelete", { link = "DiffRemovedGutter" })
 
-set_hl("diffAdded", { fg = palette.green, bg = palette.bg_alt })
-set_hl("diffChanged", { fg = palette.violet })
-set_hl("diffRemoved", { fg = palette.red, bg = palette.base3 })
+set_hl("diffAdded", { fg = palette.diff_add, bg = palette.bg_alt })
+set_hl("diffChanged", { fg = palette.diff_change })
+set_hl("diffRemoved", { fg = palette.diff_delete, bg = palette.base3 })
 set_hl("diffLine", { fg = palette.violet })
 set_hl("diffIndexLine", { fg = palette.cyan })
 set_hl("diffSubname", { fg = palette.cyan })
@@ -310,7 +317,7 @@ set_hl("@annotation", { link = "PreProc" })
 set_hl("@attribute", { link = "Attribute" })
 set_hl("@conditional", { link = "Conditional" })
 set_hl("@comment", { link = "Comment" })
-set_hl("@constructor", { link = "Structure" })
+set_hl("@constructor", { link = "Class" })
 set_hl("@constant", { link = "Constant" })
 set_hl("@constant.builtin", { link = "Constant" })
 set_hl("@constant.macro", { link = "Macro" })
@@ -327,7 +334,7 @@ set_hl("@keyword.function", { link = "KeywordFunction" })
 set_hl("@label", { link = "Label" })
 set_hl("@math", { link = "Special" })
 set_hl("@method", { link = "Method" })
-set_hl("@namespace", { link = "Directory" })
+set_hl("@namespace", { fg = palette.namespace })
 set_hl("@number", { link = "Number" })
 set_hl("@boolean", { link = "Boolean" })
 set_hl("@operator", { link = "Operator" })
@@ -339,8 +346,8 @@ set_hl("@punctuation.bracket", { link = "Delimiter" })
 set_hl("@punctuation.special", { link = "Delimiter" })
 set_hl("@repeat", { link = "Repeat" })
 set_hl("@string", { link = "String" })
-set_hl("@string.regex", { link = "StringDelimiter" })
-set_hl("@string.escape", { link = "StringDelimiter" })
+set_hl("@string.regex", { link = "Regexp" })
+set_hl("@string.escape", { link = "SpecialChar" })
 set_hl("@structure", { link = "Structure" })
 set_hl("@tag", { link = "Tag" })
 set_hl("@tag.attribute", { link = "Attribute" })
@@ -351,6 +358,10 @@ set_hl("@warning", { link = "WarningMsg" })
 set_hl("@danger", { link = "ErrorMsg" })
 set_hl("@type", { link = "Type" })
 set_hl("@type.builtin", { link = "TypeBuiltin" })
+set_hl("@type.definition", { link = "Typedef" })
+set_hl("@interface", { fg = palette.interface })
+set_hl("@enum", { link = "Enum" })
+set_hl("@decorator", { fg = palette.decorator })
 set_hl("@variable", { fg = palette.variable })
 set_hl("@variable.builtin", { link = "VariableBuiltin" })
 set_hl("@text", { link = "Normal" })

@@ -1,5 +1,7 @@
-file:///home/dan/Documents
-file:///home/dan/Music
-file:///home/dan/Pictures
-file:///home/dan/Videos
-file:///home/dan/Downloads
+smb://192.168.1.76/dan/ dan on 192.168.1.76
+smb://192.168.1.76/media1/ media1 on 192.168.1.76
+file:///home/dan/Documents Documents
+file:///home/dan/Music Music
+file:///home/dan/Pictures Pictures
+file:///home/dan/Videos Videos
+file:///home/dan/Downloads Downloads

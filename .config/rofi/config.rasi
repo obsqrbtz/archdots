@@ -1,0 +1,18 @@
+configuration {
+    modes: "drun,run,window";
+    font: "MonaspiceNe Nerd Font 11";
+    show-icons: false;
+    terminal: "ghostty";
+    matching: "fuzzy";
+    drun-display-format: "{name}";
+    window-format: "{c}   {t}";
+    display-drun: "run";
+    display-run: "exec";
+    display-window: "win";
+    display-combi: "all";
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+}
+
+@theme "~/.config/rofi/theme.rasi"

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Sway (dotfiles)
+Comment=sway, started through ~/.config/sway/start so the session env is set
+Exec=/home/dan/.config/sway/start
+Type=Application
+DesktopNames=sway;wlroots

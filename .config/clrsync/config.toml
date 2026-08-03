@@ -4,11 +4,23 @@ font = 'MonaspiceNe Nerd Font'
 font_size = 14
 palettes_path = '~/.config/clrsync/palettes'
 
-[templates.firefox]
+[templates.dunst]
 enabled = true
+input_path = '~/.config/clrsync/templates/dunstrc.conf'
+output_path = '~/.config/dunst/dunstrc.d/50-clrsync.conf'
+reload_cmd = 'dunstctl reload'
+
+[templates.firefox]
+enabled = false
 input_path = '/home/dan/.config/clrsync/templates/userChrome.css'
 output_path = '/home/dan/.mozilla/firefox/pvzetq2b.default-release/chrome/userChrome.css'
 reload_cmd = ''
+
+[templates.ghostty]
+enabled = true
+input_path = '~/.config/clrsync/templates/ghostty.conf'
+output_path = '~/.config/ghostty/themes/clrsync'
+reload_cmd = 'pkill -SIGUSR2 ghostty'
 
 [templates.gtk3]
 enabled = true
@@ -23,9 +35,9 @@ output_path = '/home/dan/.config/gtk-4.0/colors.css'
 reload_cmd = ''
 
 [templates.hyprland]
-enabled = true
+enabled = false
 input_path = '/home/dan/.config/clrsync/templates/hyprland.conf'
-output_path = '/home/dan/.config/hypr/hyprland/clrsync.conf'
+output_path = '/home/dan/.config/hypr/hyprland/clrsync.lua'
 reload_cmd = ''
 
 [templates.kitty]
@@ -65,15 +77,27 @@ output_path = '/home/dan/.config/qt6ct/colors/clrsync.conf'
 reload_cmd = ''
 
 [templates.quickshell]
-enabled = true
+enabled = false
 input_path = '/home/dan/.config/clrsync/templates/quickshell.qml'
 output_path = '/home/dan/.config/quickshell/basedgoose.shell/Commons/Theme.qml'
 reload_cmd = ''
 
+[templates.rofi]
+enabled = true
+input_path = '~/.config/clrsync/templates/rofi.rasi'
+output_path = '~/.config/rofi/colors.rasi'
+reload_cmd = ''
+
+[templates.sway]
+enabled = true
+input_path = '~/.config/clrsync/templates/sway.conf'
+output_path = '~/.config/sway/config.d/05-colors.conf'
+reload_cmd = 'swaymsg reload'
+
 [templates.telegram]
 enabled = true
-input_path = '~/.config/clrsync/templates/telegram.tdesktop-theme'
-output_path = '~/clrsync.tdesktop-theme'
+input_path = '/home/dan/.config/clrsync/templates/telegram.tdesktop-theme'
+output_path = '/home/dan/clrsync.tdesktop-theme'
 reload_cmd = ''
 
 [templates.vscode]
@@ -81,3 +105,9 @@ enabled = true
 input_path = '/home/dan/.config/clrsync/templates/code.json'
 output_path = '/home/dan/.vscode/extensions/obsqrbtz.clrsync-1.0.2/themes/clrsync-color-theme.json'
 reload_cmd = ''
+
+[templates.waybar]
+enabled = true
+input_path = '~/.config/clrsync/templates/waybar.css'
+output_path = '~/.config/waybar/colors.css'
+reload_cmd = 'pkill -SIGUSR2 waybar'

@@ -1,0 +1,112 @@
+@import url("colors.css");
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "MonaspiceNe Nerd Font";
+    font-size: 12px;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+}
+
+window#waybar {
+    background: @bg;
+    color: @fg;
+    border-bottom: 1px solid @border;
+}
+
+/* Workspaces ------------------------------------------------------------- */
+
+#workspaces button {
+    padding: 0 8px;
+    background: transparent;
+    color: @muted;
+    border-bottom: 1px solid transparent;
+}
+
+#workspaces button:hover {
+    background: @surface;
+    color: @fg;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+#workspaces button.focused,
+#workspaces button.visible {
+    color: @accent;
+    border-bottom: 1px solid @accent;
+}
+
+#workspaces button.urgent {
+    color: @bg;
+    background: @error;
+}
+
+/* Modules ---------------------------------------------------------------- */
+
+#mode {
+    padding: 0 8px;
+    color: @bg;
+    background: @accent;
+}
+
+#window {
+    color: @muted;
+}
+
+window#waybar.empty #window {
+    background: transparent;
+}
+
+#custom-media,
+#pulseaudio,
+#backlight,
+#cpu,
+#memory,
+#network,
+#battery,
+#clock {
+    padding: 0 8px;
+    color: @fg;
+    border-left: 1px solid @border;
+}
+
+#custom-media {
+    color: @muted;
+}
+
+#clock {
+    color: @accent;
+}
+
+#network.disconnected {
+    color: @muted;
+}
+
+#pulseaudio.muted {
+    color: @muted;
+}
+
+#battery.warning {
+    color: @warning;
+}
+
+#battery.critical {
+    color: @error;
+}
+
+#tray {
+    padding: 0 6px;
+    border-left: 1px solid @border;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+tooltip {
+    background: @surface;
+    border: 1px solid @border;
+    color: @fg;
+}

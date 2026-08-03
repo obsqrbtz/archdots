@@ -89,7 +89,7 @@ inactive.highlight.color={accent}
 text.color={on_surface}
 window.text.color={on_surface}
 button.text.color={on_surface}
-disabled.text.color={editor_disabled}
+disabled.text.color={editor_comment}
 tooltip.text.color={on_surface}
 highlight.text.color={on_surface}
 link.color={base06}
@@ -568,4 +568,5 @@ frame.element=window
 frame.bottom=10
 frame.top=10
 
-text.disabled.color={editor_disabled}
+text.disabled.color={editor_comment}
+

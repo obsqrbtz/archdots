@@ -33,7 +33,7 @@ editor_whitespace = '#B0B0B0FF'
 # Editor - Gutter
 editor_gutter_background = '#E0E0E0FF'
 editor_gutter_foreground = '#9A9A95FF'
-editor_line_number = '#9A9A95FF'
+editor_line_number = '#7A7A75FF'
 editor_line_number_active = '#2A2A2AFF'
 
 # Editor - Syntax

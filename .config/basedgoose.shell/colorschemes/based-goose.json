@@ -1,0 +1,18 @@
+{
+  "name": "Based Goose",
+  "background": "#0C0C0C",
+  "surfaceBase": "#111111",
+  "surfaceContainer": "#181818",
+  "border": "#2A2A2A",
+  "surfaceBorder": "#222222",
+  "foreground": "#C8C8C8",
+  "foregroundMuted": "#525252",
+  "primary": "#5FAD5F",
+  "primaryMuted": "#0A190A",
+  "secondary": "#B89A3C",
+  "secondaryMuted": "#1A150A",
+  "info": "#7AA2F7",
+  "warning": "#B89A3C",
+  "success": "#5FAD5F",
+  "error": "#B85450"
+}

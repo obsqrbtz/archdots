@@ -1,0 +1,105 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 24,
+    "spacing": 0,
+
+    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-center": ["sway/window"],
+    "modules-right": [
+        "custom/media",
+        "pulseaudio",
+        "backlight",
+        "cpu",
+        "memory",
+        "network",
+        "battery",
+        "tray",
+        "clock"
+    ],
+
+    "sway/workspaces": {
+        "all-outputs": true,
+        "disable-scroll": false,
+        "format": "{name}"
+    },
+
+    "sway/mode": {
+        "format": "-- {} --"
+    },
+
+    "sway/window": {
+        "max-length": 90,
+        "format": "{title}",
+        "rewrite": {
+            "(.*) — Dolphin": "$1",
+            "(.*) - Mozilla Firefox": "$1"
+        }
+    },
+
+    "custom/media": {
+        "interval": 5,
+        "max-length": 45,
+        "exec": "playerctl metadata --format '{{artist}} - {{title}}' 2>/dev/null",
+        "exec-if": "playerctl status 2>/dev/null",
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next",
+        "tooltip": false
+    },
+
+    "pulseaudio": {
+        "format": "vol {volume}%",
+        "format-bluetooth": "bt {volume}%",
+        "format-muted": "vol --",
+        "on-click": "pavucontrol",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "tooltip": false
+    },
+
+    "backlight": {
+        "format": "lum {percent}%",
+        "tooltip": false
+    },
+
+    "cpu": {
+        "interval": 3,
+        "format": "cpu {usage}%",
+        "tooltip": false
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": "mem {percentage}%",
+        "tooltip-format": "{used:0.1f}G / {total:0.1f}G"
+    },
+
+    "network": {
+        "format-wifi": "{essid} {signalStrength}%",
+        "format-ethernet": "eth",
+        "format-disconnected": "offline",
+        "tooltip-format": "{ifname}  {ipaddr}",
+        "on-click": "nm-connection-editor"
+    },
+
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "bat {capacity}%",
+        "format-charging": "chr {capacity}%",
+        "tooltip-format": "{timeTo}"
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+
+    "clock": {
+        "interval": 30,
+        "format": "{:%a %d %b  %H:%M}",
+        "format-alt": "{:%Y-%m-%d %H:%M:%S}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    }
+}

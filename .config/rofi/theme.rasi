@@ -1,0 +1,78 @@
+@import "~/.config/rofi/colors.rasi"
+
+* {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    width:            38%;
+    location:         center;
+    anchor:           center;
+    background-color: @bg;
+    border:           1px;
+    border-color:     @accent;
+    padding:          0;
+}
+
+mainbox {
+    children: [ inputbar, listview ];
+    spacing:  0;
+    padding:  0;
+}
+
+inputbar {
+    background-color: @surface;
+    padding:          6px 10px;
+    spacing:          8px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color: @accent;
+}
+
+entry {
+    placeholder:            "";
+    placeholder-color:      @muted;
+    cursor:                 text;
+}
+
+listview {
+    lines:        12;
+    fixed-height: false;
+    scrollbar:    false;
+    padding:      4px 0;
+    spacing:      0;
+}
+
+element {
+    padding:    4px 12px;
+    text-color: @muted;
+}
+
+element selected {
+    background-color: @accent;
+    text-color:       @bg;
+}
+
+element urgent {
+    text-color: @error;
+}
+
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
+    vertical-align:   0.5;
+}
+
+message {
+    padding:          6px 10px;
+    background-color: @surface;
+}
+
+error-message {
+    padding:          10px;
+    background-color: @bg;
+    text-color:       @error;
+}

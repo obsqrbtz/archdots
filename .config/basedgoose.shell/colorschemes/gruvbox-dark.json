@@ -1,0 +1,18 @@
+{
+  "name": "Gruvbox Dark",
+  "background": "#1D2021",
+  "surfaceBase": "#282828",
+  "surfaceContainer": "#32302F",
+  "border": "#3C3836",
+  "surfaceBorder": "#3C3836",
+  "foreground": "#EBDBB2",
+  "foregroundMuted": "#928374",
+  "primary": "#B8BB26",
+  "primaryMuted": "#1B1D0E",
+  "secondary": "#FABD2F",
+  "secondaryMuted": "#251D0C",
+  "info": "#83A598",
+  "warning": "#FE8019",
+  "success": "#B8BB26",
+  "error": "#FB4934"
+}

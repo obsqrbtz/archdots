@@ -1,0 +1,9 @@
+* {
+    bg:      #111111;
+    surface: #191919;
+    fg:      #D2D2D2;
+    muted:   #849899;
+    accent:  #9A8652;
+    line:    #242424;
+    error:   #AA4E4A;
+}

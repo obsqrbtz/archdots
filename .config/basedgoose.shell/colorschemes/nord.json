@@ -1,0 +1,18 @@
+{
+  "name": "Nord",
+  "background": "#2E3440",
+  "surfaceBase": "#323846",
+  "surfaceContainer": "#3B4252",
+  "border": "#434C5E",
+  "surfaceBorder": "#3B4252",
+  "foreground": "#ECEFF4",
+  "foregroundMuted": "#7B88A1",
+  "primary": "#88C0D0",
+  "primaryMuted": "#1E2933",
+  "secondary": "#81A1C1",
+  "secondaryMuted": "#1D2530",
+  "info": "#5E81AC",
+  "warning": "#EBCB8B",
+  "success": "#A3BE8C",
+  "error": "#BF616A"
+}

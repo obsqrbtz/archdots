@@ -1,0 +1,18 @@
+{
+  "name": "Tokyo Night",
+  "background": "#1A1B26",
+  "surfaceBase": "#1F2335",
+  "surfaceContainer": "#24283B",
+  "border": "#2F344D",
+  "surfaceBorder": "#292E42",
+  "foreground": "#C0CAF5",
+  "foregroundMuted": "#565F89",
+  "primary": "#7AA2F7",
+  "primaryMuted": "#11192E",
+  "secondary": "#BB9AF7",
+  "secondaryMuted": "#1B1530",
+  "info": "#7DCFFF",
+  "warning": "#E0AF68",
+  "success": "#9ECE6A",
+  "error": "#F7768E"
+}

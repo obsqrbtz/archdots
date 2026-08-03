@@ -1,7 +1,7 @@
 {
   "wallpaperDirectory": "/home/dan/Pictures/walls",
   "wallpaperDownloadDirectory": "~/Pictures/downloaded",
-  "wallpaperResizeMode": "fit",
+  "wallpaperResizeMode": "crop",
   "hyprlandMonitorsConfigPath": "~/.config/hypr/hyprland/monitors.conf",
   "barPosition": "top",
   "barModules": {
@@ -16,10 +16,19 @@
     "right": [
       "clock",
       "systemtray",
-      "volume",
+      "network",
       "bluetooth",
-      "notifications",
-      "power"
+      "volume",
+      "power",
+      "notifications"
     ]
-  }
+  },
+  "monitorServers": [
+    {
+      "name": "Fedora (home)",
+      "host": "192.168.1.76",
+      "port": "9091"
+    }
+  ],
+  "colorScheme": "based-goose"
 }
