@@ -2,16 +2,6 @@ if status is-interactive
     # Commands to run in interactive sessions can go here
 end
 
-function fish_prompt
-    set -l time_str (date "+%H:%M")
-    echo -n (set_color 999999)"$time_str "(set_color green)"$USER "(set_color red)"> "(set_color normal)
-end
-
-function fish_right_prompt
-    set -l tty_short (tty | string replace "/dev/" "")
-    echo -n (set_color red)"< "(set_color cyan)"$hostname"(set_color normal)":"(set_color yellow)"$tty_short"(set_color normal)""
-end
-
 set -x CMAKE_GENERATOR Ninja
 set -x GITLAB_HOME /srv/gitlab
 #set -x SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-WALL_DIR="${WALL_DIR:-$HOME/Pictures/walls}"
+WALL_DIR="${WALL_DIR:-$HOME/Pictures/walls/desktop}"
 STATE="$HOME/.cache/sway/wallpaper"
 MODE="${SWAYBG_MODE:-fill}"
 
