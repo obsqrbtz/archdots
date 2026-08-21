@@ -64,6 +64,7 @@ window#waybar.empty #window {
 #backlight,
 #cpu,
 #memory,
+#custom-vpn,
 #network,
 #bluetooth,
 #battery,
@@ -83,6 +84,14 @@ window#waybar.empty #window {
 
 #network.disconnected {
     color: @muted;
+}
+
+#custom-vpn.disconnected {
+    color: @muted;
+}
+
+#custom-vpn.connected {
+    color: @accent;
 }
 
 #pulseaudio.muted {

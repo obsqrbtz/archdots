@@ -1,0 +1,1054 @@
+#!/usr/bin/env python3
+"""vpnctl -- subscription-driven sing-box controller.
+
+State lives in $XDG_STATE_HOME/vpn
+"""
+
+import argparse
+import base64
+import binascii
+import concurrent.futures as futures
+import json
+import os
+import re
+import socket
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from hashlib import sha1
+from pathlib import Path
+
+STATE_DIR = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state")) / "vpn"
+SUBS_FILE = STATE_DIR / "subs.json"
+STATE_FILE = STATE_DIR / "state.json"
+PING_FILE = STATE_DIR / "ping.json"
+PROXY_CONFIG = STATE_DIR / "config.json"
+TUN_CONFIG = Path("/etc/vpn/config.json")
+
+TUN_UNIT = "vpn-tun.service"
+PROXY_UNIT = "vpn-proxy.service"
+
+MIXED_PORT = 2080
+SUB_UA = "v2rayNG/1.9.15"
+DEFAULT_AUTOUPDATE_HOURS = 6
+
+# ---------------------------------------------------------------- state ----
+
+
+def load_json(path, default):
+    try:
+        with path.open() as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return default
+
+
+def save_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with tmp.open("w") as fh:
+        json.dump(data, fh, indent=2)
+    tmp.replace(path)
+    if path in (SUBS_FILE, STATE_FILE):
+        path.chmod(0o600)
+
+
+def load_subs():
+    return load_json(SUBS_FILE, {"subs": []})
+
+
+def load_state():
+    state = load_json(STATE_FILE, {})
+    state.setdefault("mode", "tun")
+    state.setdefault("sub", None)
+    state.setdefault("node", None)
+    state.setdefault("autoupdate_hours", DEFAULT_AUTOUPDATE_HOURS)
+    return state
+
+
+def find_sub(subs, sub_id):
+    for sub in subs["subs"]:
+        if sub["id"] == sub_id:
+            return sub
+    return None
+
+
+def find_node(sub, node_id):
+    for node in sub.get("nodes", []):
+        if node["id"] == node_id:
+            return node
+    return None
+
+
+def active_node():
+    """Return (sub, node) for the current selection, or (None, None)."""
+    state = load_state()
+    subs = load_subs()
+    sub = find_sub(subs, state.get("sub"))
+    if not sub:
+        return None, None
+    return sub, find_node(sub, state.get("node"))
+
+
+# ------------------------------------------------------- link  parsing  ----
+
+
+def b64decode(data):
+    """Decode base64 that may be url-safe and/or missing its padding."""
+    data = data.strip().replace("-", "+").replace("_", "/")
+    data += "=" * (-len(data) % 4)
+    return base64.b64decode(data)
+
+
+def qs(url):
+    return {k: v[0] for k, v in urllib.parse.parse_qs(url.query, keep_blank_values=True).items()}
+
+
+def node_id(kind, server, port, secret):
+    """Stable id: survives a subscription update that only renames the node."""
+    raw = f"{kind}|{server}|{port}|{secret}".encode()
+    return sha1(raw).hexdigest()[:10]
+
+
+def truthy(value):
+    return str(value).lower() in ("1", "true", "yes")
+
+
+def build_tls(params, default_sni):
+    security = (params.get("security") or "none").lower()
+    if security not in ("tls", "reality", "xtls"):
+        return None
+
+    tls = {"enabled": True, "server_name": params.get("sni") or params.get("host") or default_sni}
+    if truthy(params.get("allowInsecure", "")):
+        tls["insecure"] = True
+    if params.get("alpn"):
+        tls["alpn"] = [a for a in params["alpn"].replace("%2C", ",").split(",") if a]
+
+    fingerprint = params.get("fp") or ("chrome" if security == "reality" else "")
+    if fingerprint:
+        tls["utls"] = {"enabled": True, "fingerprint": fingerprint}
+
+    if security == "reality":
+        tls["reality"] = {
+            "enabled": True,
+            "public_key": params.get("pbk", ""),
+            "short_id": params.get("sid", ""),
+        }
+    return tls
+
+
+def build_transport(params):
+    """Map a share-link transport onto sing-box. Returns (transport, error)."""
+    net = (params.get("type") or params.get("net") or "tcp").lower()
+    host = params.get("host", "")
+    path = params.get("path", "/")
+
+    if net in ("tcp", "raw", ""):
+        if (params.get("headerType") or "").lower() == "http":
+            return {"type": "http", "host": [h for h in host.split(",") if h], "path": path}, None
+        return None, None
+
+    if net == "ws":
+        transport = {"type": "ws", "path": path}
+        if host:
+            transport["headers"] = {"Host": host}
+        # v2ray smuggles early data into the path as ?ed=<size>
+        if "?ed=" in path:
+            base, _, ed = path.partition("?ed=")
+            transport["path"] = base
+            transport["max_early_data"] = int(re.sub(r"\D", "", ed) or 2048)
+            transport["early_data_header_name"] = "Sec-WebSocket-Protocol"
+        return transport, None
+
+    if net == "grpc":
+        return {"type": "grpc", "service_name": params.get("serviceName") or path.lstrip("/")}, None
+
+    if net == "httpupgrade":
+        transport = {"type": "httpupgrade", "path": path}
+        if host:
+            transport["host"] = host
+        return transport, None
+
+    if net in ("h2", "http"):
+        return {"type": "http", "host": [h for h in host.split(",") if h], "path": path}, None
+
+    if net == "quic":
+        return {"type": "quic"}, None
+
+    return None, f"transport {net} is not supported by sing-box"
+
+
+def parse_vless(link):
+    url = urllib.parse.urlparse(link)
+    params = qs(url)
+    server, port = url.hostname, url.port or 443
+    name = urllib.parse.unquote(url.fragment) or f"{server}:{port}"
+
+    out = {
+        "type": "vless",
+        "server": server,
+        "server_port": port,
+        "uuid": urllib.parse.unquote(url.username or ""),
+        "packet_encoding": "xudp",
+    }
+    if params.get("flow"):
+        out["flow"] = params["flow"]
+
+    tls = build_tls(params, server)
+    if tls:
+        out["tls"] = tls
+    transport, err = build_transport(params)
+    if err:
+        return None, name, err
+    if transport:
+        out["transport"] = transport
+
+    return out, name, None
+
+
+def parse_vmess(link):
+    body = link[len("vmess://"):]
+    try:
+        raw = json.loads(b64decode(body))
+    except (binascii.Error, ValueError, UnicodeDecodeError):
+        return None, link[:40], "malformed vmess link"
+
+    server = raw.get("add", "")
+    port = int(raw.get("port") or 443)
+    name = raw.get("ps") or f"{server}:{port}"
+
+    out = {
+        "type": "vmess",
+        "server": server,
+        "server_port": port,
+        "uuid": raw.get("id", ""),
+        "alter_id": int(raw.get("aid") or 0),
+        "security": raw.get("scy") or "auto",
+    }
+
+    params = {
+        "security": "tls" if str(raw.get("tls", "")).lower() in ("tls", "reality") else "none",
+        "sni": raw.get("sni", ""),
+        "host": raw.get("host", ""),
+        "path": raw.get("path", "/"),
+        "type": raw.get("net", "tcp"),
+        "headerType": raw.get("type", ""),
+        "alpn": raw.get("alpn", ""),
+        "fp": raw.get("fp", ""),
+        "serviceName": raw.get("path", ""),
+    }
+    tls = build_tls(params, server)
+    if tls:
+        out["tls"] = tls
+    transport, err = build_transport(params)
+    if err:
+        return None, name, err
+    if transport:
+        out["transport"] = transport
+
+    return out, name, None
+
+
+def parse_trojan(link):
+    url = urllib.parse.urlparse(link)
+    params = qs(url)
+    server, port = url.hostname, url.port or 443
+    name = urllib.parse.unquote(url.fragment) or f"{server}:{port}"
+
+    out = {
+        "type": "trojan",
+        "server": server,
+        "server_port": port,
+        "password": urllib.parse.unquote(url.username or ""),
+    }
+    # trojan is TLS by default, even when the link omits security=tls
+    params.setdefault("security", "tls")
+    tls = build_tls(params, server)
+    if tls:
+        out["tls"] = tls
+    transport, err = build_transport(params)
+    if err:
+        return None, name, err
+    if transport:
+        out["transport"] = transport
+
+    return out, name, None
+
+
+def parse_ss(link):
+    body = link[len("ss://"):]
+    body, _, fragment = body.partition("#")
+    name = urllib.parse.unquote(fragment)
+    body, _, _query = body.partition("?")
+
+    if "@" in body:
+        # SIP002: ss://base64(method:pass)@host:port
+        userinfo, _, hostport = body.rpartition("@")
+        try:
+            userinfo = b64decode(userinfo).decode()
+        except (binascii.Error, UnicodeDecodeError):
+            userinfo = urllib.parse.unquote(userinfo)
+    else:
+        # legacy: ss://base64(method:pass@host:port)
+        try:
+            decoded = b64decode(body).decode()
+        except (binascii.Error, UnicodeDecodeError):
+            return None, name or link[:40], "malformed ss link"
+        userinfo, _, hostport = decoded.rpartition("@")
+
+    method, _, password = userinfo.partition(":")
+    host, _, port = hostport.rpartition(":")
+    host = host.strip("[]")
+    try:
+        port = int(port)
+    except ValueError:
+        return None, name or link[:40], "malformed ss link"
+
+    out = {
+        "type": "shadowsocks",
+        "server": host,
+        "server_port": port,
+        "method": method,
+        "password": password,
+    }
+    return out, name or f"{host}:{port}", None
+
+
+PARSERS = {
+    "vless": parse_vless,
+    "vmess": parse_vmess,
+    "trojan": parse_trojan,
+    "ss": parse_ss,
+}
+
+
+def parse_link(link):
+    """Share link -> node dict. Unsupported nodes are kept, flagged with an error."""
+    link = link.strip()
+    scheme = link.split("://", 1)[0].lower() if "://" in link else ""
+    parser = PARSERS.get(scheme)
+    if not parser:
+        return None
+
+    try:
+        out, name, err = parser(link)
+    except Exception as exc:  # a single bad link must not sink the whole sub
+        return {"id": node_id("bad", link, 0, ""), "name": link[:40], "type": scheme,
+                "server": "", "port": 0, "error": str(exc), "outbound": None}
+
+    if err or not out:
+        return {"id": node_id(scheme, link, 0, ""), "name": name, "type": scheme,
+                "server": "", "port": 0, "error": err or "unparsable", "outbound": None}
+
+    secret = out.get("uuid") or out.get("password") or ""
+    return {
+        "id": node_id(out["type"], out["server"], out["server_port"], secret),
+        "name": name,
+        "type": out["type"],
+        "server": out["server"],
+        "port": out["server_port"],
+        "error": None,
+        "outbound": out,
+    }
+
+
+# ------------------------------------------------------- subscriptions  ----
+
+
+def fetch_subscription(url):
+    """Return (links, userinfo, title). Handles base64 and plaintext bodies."""
+    req = urllib.request.Request(url, headers={"User-Agent": SUB_UA, "Accept": "*/*"})
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        body = resp.read().decode("utf-8", "replace")
+        headers = resp.headers
+
+    userinfo = {}
+    raw_userinfo = headers.get("subscription-userinfo", "")
+    for part in raw_userinfo.split(";"):
+        key, _, value = part.strip().partition("=")
+        if key and value.strip().lstrip("-").isdigit():
+            userinfo[key] = int(value)
+
+    title = headers.get("profile-title", "")
+    if title.startswith("base64:"):
+        try:
+            title = b64decode(title[7:]).decode("utf-8", "replace")
+        except binascii.Error:
+            title = ""
+
+    text = body
+    if "://" not in body:
+        try:
+            text = b64decode(body).decode("utf-8", "replace")
+        except (binascii.Error, UnicodeDecodeError):
+            raise RuntimeError("subscription body is neither base64 nor a link list")
+
+    links = [line.strip() for line in text.splitlines() if "://" in line]
+    if not links:
+        raise RuntimeError("subscription contained no share links")
+    return links, userinfo, title
+
+
+def sub_update(sub):
+    """Refresh one subscription in place. Returns a short status string."""
+    links, userinfo, title = fetch_subscription(sub["url"])
+    nodes = [node for node in (parse_link(link) for link in links) if node]
+    if not nodes:
+        raise RuntimeError("no usable nodes in subscription")
+
+    sub["nodes"] = nodes
+    sub["updated"] = int(time.time())
+    sub["userinfo"] = userinfo
+    if title and not sub.get("named"):
+        sub["name"] = title
+    bad = sum(1 for node in nodes if node["error"])
+    return f"{len(nodes)} nodes" + (f", {bad} unsupported" if bad else "")
+
+
+# ---------------------------------------------------------- config gen ----
+
+
+def gen_config(node, mode):
+    outbound = dict(node["outbound"])
+    outbound["tag"] = "proxy"
+
+    inbounds = [{
+        "type": "mixed",
+        "tag": "mixed-in",
+        "listen": "127.0.0.1",
+        "listen_port": MIXED_PORT,
+    }]
+    if mode == "tun":
+        inbounds.insert(0, {
+            "type": "tun",
+            "tag": "tun-in",
+            "address": ["172.19.0.1/30", "fdfe:dcba:9876::1/126"],
+            "auto_route": True,
+            "strict_route": True,
+            "stack": "mixed",
+        })
+
+    rules = [{"action": "sniff"}]
+    if mode == "tun":
+        rules.append({"protocol": "dns", "action": "hijack-dns"})
+    rules.append({"ip_is_private": True, "outbound": "direct"})
+
+    return {
+        "log": {"level": "warn", "timestamp": True},
+        "dns": {
+            "servers": [
+                {"type": "udp", "tag": "dns-remote", "server": "1.1.1.1", "detour": "proxy"},
+                {"type": "local", "tag": "dns-local"},
+            ],
+            "final": "dns-remote",
+            "strategy": "prefer_ipv4",
+            "independent_cache": True,
+        },
+        "inbounds": inbounds,
+        "outbounds": [outbound, {"type": "direct", "tag": "direct"}],
+        "route": {
+            "rules": rules,
+            "final": "proxy",
+            "auto_detect_interface": True,
+            # resolve the proxy server's own hostname off-tunnel, or we deadlock
+            "default_domain_resolver": {"server": "dns-local"},
+        },
+    }
+
+
+def config_path(mode):
+    return TUN_CONFIG if mode == "tun" else PROXY_CONFIG
+
+
+def write_config(node, mode):
+    # A subscription refresh can move a node onto a transport we cannot build,
+    # while keeping the id we are pointed at.
+    if node["error"] or not node.get("outbound"):
+        die(f"node '{node['name']}' is unusable: {node['error'] or 'no outbound'}")
+
+    path = config_path(mode)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        save_json(path, gen_config(node, mode))
+        # holds the node credentials -- keep it off world-readable. /etc/vpn is
+        # setgid sing-box, so the service still gets at it through the group.
+        path.chmod(0o640 if mode == "tun" else 0o600)
+    except OSError as exc:
+        if mode == "tun":
+            die(f"cannot write {path}: {exc}\nrun ~/.config/vpn/install.sh once to set tun mode up")
+        die(f"cannot write {path}: {exc}")
+
+    check = run(["sing-box", "check", "-c", str(path)])
+    if check.returncode != 0:
+        die(f"sing-box rejected the generated config:\n{check.stderr.strip()}")
+    return path
+
+
+# ------------------------------------------------------ service control ----
+
+
+def run(cmd, **kwargs):
+    return subprocess.run(cmd, capture_output=True, text=True, **kwargs)
+
+
+def unit_cmd(mode, *args):
+    if mode == "tun":
+        return ["systemctl", *args, TUN_UNIT]
+    return ["systemctl", "--user", *args, PROXY_UNIT]
+
+
+def is_active(mode):
+    return run(unit_cmd(mode, "is-active")).stdout.strip() == "active"
+
+
+def running_mode():
+    for mode in ("tun", "proxy"):
+        if is_active(mode):
+            return mode
+    return None
+
+
+def notify_waybar():
+    run(["pkill", "-RTMIN+9", "waybar"])
+
+
+def do_up(quiet=False):
+    state = load_state()
+    sub, node = active_node()
+    if not node:
+        die("no node selected -- pick one from the menu first")
+    if node["error"]:
+        die(f"node '{node['name']}' is unusable: {node['error']}")
+
+    mode = state["mode"]
+    write_config(node, mode)
+
+    other = "proxy" if mode == "tun" else "tun"
+    if is_active(other):
+        run(unit_cmd(other, "stop"))
+
+    result = run(unit_cmd(mode, "restart" if is_active(mode) else "start"))
+    notify_waybar()
+    if result.returncode != 0:
+        die(f"failed to start {mode} service:\n{result.stderr.strip()}")
+    if not quiet:
+        print(f"connected: {node['name']} ({mode})")
+
+
+def do_down(quiet=False):
+    for mode in ("tun", "proxy"):
+        if is_active(mode):
+            run(unit_cmd(mode, "stop"))
+    notify_waybar()
+    if not quiet:
+        print("disconnected")
+
+
+# -------------------------------------------------------------- pinging ----
+
+
+def tcp_latency(host, port, timeout=3.0, attempts=2):
+    best = None
+    for _ in range(attempts):
+        start = time.monotonic()
+        try:
+            with socket.create_connection((host, port), timeout=timeout):
+                pass
+        except OSError:
+            continue
+        elapsed = int((time.monotonic() - start) * 1000)
+        best = elapsed if best is None else min(best, elapsed)
+    return best
+
+
+def ping_nodes(nodes):
+    """TCP-handshake latency for every node, measured in parallel."""
+    targets = [node for node in nodes if node["server"] and not node["error"]]
+    results = {}
+    if targets:
+        with futures.ThreadPoolExecutor(max_workers=min(32, len(targets))) as pool:
+            jobs = {pool.submit(tcp_latency, n["server"], n["port"]): n["id"] for n in targets}
+            for job in futures.as_completed(jobs):
+                results[jobs[job]] = job.result()
+
+    cache = load_json(PING_FILE, {})
+    now = int(time.time())
+    for nid, latency in results.items():
+        cache[nid] = {"ms": latency, "at": now}
+    save_json(PING_FILE, cache)
+    return results
+
+
+def ping_cache():
+    return load_json(PING_FILE, {})
+
+
+def check_tunnel():
+    """Prove the tunnel actually carries traffic, not just that the unit is up."""
+    mode = running_mode()
+    if not mode:
+        return None, "not connected"
+
+    cmd = ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code} %{time_total}",
+           "--max-time", "8", "https://www.gstatic.com/generate_204"]
+    if mode == "proxy":
+        cmd[1:1] = ["--proxy", f"socks5h://127.0.0.1:{MIXED_PORT}"]
+
+    result = run(cmd)
+    if result.returncode != 0:
+        return None, "no response through the tunnel"
+    code, _, seconds = result.stdout.partition(" ")
+    if code not in ("204", "200"):
+        return None, f"unexpected response {code}"
+    return int(float(seconds) * 1000), "ok"
+
+
+# ----------------------------------------------------------- formatting ----
+
+
+def ago(timestamp):
+    if not timestamp:
+        return "never"
+    delta = int(time.time()) - int(timestamp)
+    if delta < 90:
+        return "just now"
+    if delta < 5400:
+        return f"{delta // 60}m ago"
+    if delta < 172800:
+        return f"{delta // 3600}h ago"
+    return f"{delta // 86400}d ago"
+
+
+def human_bytes(value):
+    step = float(value)
+    for unit in ("B", "K", "M", "G", "T"):
+        if step < 1024 or unit == "T":
+            return f"{step:.0f}{unit}" if unit == "B" else f"{step:.1f}{unit}"
+        step /= 1024
+    return f"{step:.1f}T"
+
+
+def latency_label(node, cache):
+    if node["error"]:
+        return "n/a"
+    entry = cache.get(node["id"])
+    if not entry:
+        return "-"
+    return f"{entry['ms']}ms" if entry["ms"] is not None else "down"
+
+
+def sub_traffic(sub):
+    info = sub.get("userinfo") or {}
+    if not info.get("total"):
+        return ""
+    used = info.get("upload", 0) + info.get("download", 0)
+    text = f"{human_bytes(used)}/{human_bytes(info['total'])}"
+    if info.get("expire"):
+        days = (info["expire"] - int(time.time())) // 86400
+        text += f", {days}d left" if days >= 0 else ", expired"
+    return text
+
+
+def die(message):
+    print(message, file=sys.stderr)
+    # Launched from a keybind or a waybar click there is no terminal to read,
+    # so route the failure to dunst instead of dropping it.
+    if not sys.stderr.isatty():
+        subprocess.run(["notify-send", "-a", "vpn", "-u", "critical", "-t", "6000",
+                        "vpn", message], capture_output=True)
+    sys.exit(1)
+
+
+# ---------------------------------------------------------- subcommands ----
+
+
+def cmd_sub_add(args):
+    subs = load_subs()
+    url = args.url.strip()
+    if not url.startswith(("http://", "https://")):
+        die("subscription must be an http(s) url")
+    if any(s["url"] == url for s in subs["subs"]):
+        die("that subscription is already imported")
+
+    sub = {
+        "id": sha1(url.encode()).hexdigest()[:8],
+        "name": args.name or "",
+        "named": bool(args.name),
+        "url": url,
+        "updated": 0,
+        "nodes": [],
+    }
+    status = sub_update(sub)
+    if not sub["name"]:
+        sub["name"] = urllib.parse.urlparse(url).hostname or sub["id"]
+    subs["subs"].append(sub)
+    save_json(SUBS_FILE, subs)
+
+    state = load_state()
+    if not state.get("sub"):
+        state["sub"] = sub["id"]
+        save_json(STATE_FILE, state)
+    print(f"added {sub['name']}: {status}")
+
+
+def cmd_sub_list(args):
+    subs = load_subs()
+    if args.json:
+        print(json.dumps(subs["subs"], indent=2))
+        return
+
+    state = load_state()
+    width = max((len(s["name"]) for s in subs["subs"]), default=10)
+    for sub in subs["subs"]:
+        marker = "*" if sub["id"] == state.get("sub") else " "
+        parts = [f"{len(sub.get('nodes', []))} nodes", ago(sub["updated"])]
+        traffic = sub_traffic(sub)
+        if traffic:
+            parts.append(traffic)
+        if args.rofi:
+            print(f"{marker} {sub['name'].ljust(width)}   {'  ·  '.join(parts)}")
+        else:
+            print(f"{marker} {sub['id']}  {sub['name'].ljust(width)}  {'  '.join(parts)}")
+
+
+def cmd_sub_remove(args):
+    subs = load_subs()
+    sub = find_sub(subs, args.id)
+    if not sub:
+        die(f"no subscription with id {args.id}")
+    subs["subs"] = [s for s in subs["subs"] if s["id"] != args.id]
+    save_json(SUBS_FILE, subs)
+
+    state = load_state()
+    if state.get("sub") == args.id:
+        state["sub"] = subs["subs"][0]["id"] if subs["subs"] else None
+        state["node"] = None
+        save_json(STATE_FILE, state)
+    print(f"removed {sub['name']}")
+
+
+def cmd_sub_rename(args):
+    subs = load_subs()
+    sub = find_sub(subs, args.id)
+    if not sub:
+        die(f"no subscription with id {args.id}")
+    sub["name"] = args.name
+    sub["named"] = True
+    save_json(SUBS_FILE, subs)
+    print(f"renamed to {args.name}")
+
+
+def cmd_sub_update(args):
+    subs = load_subs()
+    targets = subs["subs"] if args.all or not args.id else [find_sub(subs, args.id)]
+    targets = [t for t in targets if t]
+    if not targets:
+        die("nothing to update")
+
+    if args.stale_only:
+        cutoff = time.time() - load_state()["autoupdate_hours"] * 3600
+        targets = [t for t in targets if t["updated"] < cutoff]
+        if not targets:
+            return
+
+    failures = 0
+    for sub in targets:
+        try:
+            status = sub_update(sub)
+            if not args.quiet:
+                print(f"{sub['name']}: {status}")
+        except Exception as exc:
+            failures += 1
+            print(f"{sub['name']}: {exc}", file=sys.stderr)
+    save_json(SUBS_FILE, subs)
+
+    # a refresh may have dropped the node we were pointed at
+    state = load_state()
+    sub, node = active_node()
+    if sub and not node and sub.get("nodes"):
+        state["node"] = None
+        save_json(STATE_FILE, state)
+    if failures:
+        sys.exit(1)
+
+
+def cmd_nodes(args):
+    subs = load_subs()
+    state = load_state()
+    sub = find_sub(subs, args.sub or state.get("sub"))
+    if not sub:
+        die("no subscription selected")
+
+    nodes = sub.get("nodes", [])
+    if args.ping:
+        ping_nodes(nodes)
+    cache = ping_cache()
+
+    if args.json:
+        print(json.dumps([dict(n, latency=cache.get(n["id"], {}).get("ms")) for n in nodes], indent=2))
+        return
+
+    name_w = max((len(n["name"]) for n in nodes), default=10)
+    type_w = max((len(n["type"]) for n in nodes), default=6)
+    for node in nodes:
+        marker = "*" if node["id"] == state.get("node") else " "
+        row = (f"{marker} {node['name'].ljust(name_w)}  {node['type'].ljust(type_w)}  "
+               f"{latency_label(node, cache).rjust(6)}")
+        if args.rofi:
+            print(row + (f"   ({node['error']})" if node["error"] else ""))
+        else:
+            print(f"{node['id']} {row}")
+
+
+def cmd_use(args):
+    subs = load_subs()
+    state = load_state()
+    sub = find_sub(subs, args.sub) if args.sub else find_sub(subs, state.get("sub"))
+    if not sub:
+        die("no such subscription")
+    node = find_node(sub, args.node)
+    if not node:
+        die("no such node")
+    if node["error"]:
+        die(f"node '{node['name']}' is unusable: {node['error']}")
+
+    state["sub"] = sub["id"]
+    state["node"] = node["id"]
+    save_json(STATE_FILE, state)
+
+    if running_mode() or args.connect:
+        do_up(quiet=True)
+        print(f"connected: {node['name']}")
+    else:
+        notify_waybar()
+        print(f"selected: {node['name']}")
+
+
+def cmd_up(args):
+    do_up()
+
+
+def cmd_down(args):
+    do_down()
+
+
+def cmd_toggle(args):
+    if running_mode():
+        do_down()
+    else:
+        do_up()
+
+
+def cmd_mode(args):
+    state = load_state()
+    if not args.mode:
+        print(state["mode"])
+        return
+    if args.mode not in ("tun", "proxy"):
+        die("mode must be tun or proxy")
+
+    was_up = running_mode()
+    if was_up:
+        do_down(quiet=True)
+    state["mode"] = args.mode
+    save_json(STATE_FILE, state)
+    if was_up:
+        do_up(quiet=True)
+    notify_waybar()
+    print(f"mode: {args.mode}")
+
+
+def cmd_status(args):
+    state = load_state()
+    sub, node = active_node()
+    mode = running_mode()
+    info = {
+        "connected": bool(mode),
+        "mode": mode or state["mode"],
+        "configured_mode": state["mode"],
+        "sub": sub["name"] if sub else None,
+        "node": node["name"] if node else None,
+        "node_type": node["type"] if node else None,
+        "server": f"{node['server']}:{node['port']}" if node else None,
+        "traffic": sub_traffic(sub) if sub else "",
+        "updated": ago(sub["updated"]) if sub else "never",
+    }
+    if args.json:
+        print(json.dumps(info, indent=2))
+        return
+
+    if args.line:
+        # one-line summary for the rofi -mesg header
+        head = f"connected · {mode}" if mode else "off"
+        parts = [head, f"node: {info['node'] or 'none'}", f"sub: {info['sub'] or 'none'}"]
+        if info["traffic"]:
+            parts.append(info["traffic"])
+        print("   ".join(parts))
+        return
+
+    if mode:
+        print(f"connected  {info['node']} ({info['sub']})  {mode}")
+    else:
+        print(f"off  selected: {info['node'] or 'none'}")
+
+
+def cmd_waybar(args):
+    state = load_state()
+    sub, node = active_node()
+    mode = running_mode()
+
+    if mode:
+        name = node["name"] if node else "on"
+        text = f"vpn {name[:18]}"
+        cls = "connected"
+        tooltip = [f"connected via {mode}"]
+        if node:
+            tooltip.append(f"{node['name']}  ({node['type']})")
+            tooltip.append(f"{node['server']}:{node['port']}")
+            entry = ping_cache().get(node["id"], {})
+            if entry.get("ms") is not None:
+                tooltip.append(f"tcp {entry['ms']}ms")
+        if mode == "proxy":
+            tooltip.append(f"socks/http on 127.0.0.1:{MIXED_PORT}")
+    else:
+        text = "vpn off"
+        cls = "disconnected"
+        tooltip = ["disconnected"]
+        tooltip.append(f"selected: {node['name'] if node else 'none'}  ({state['mode']} mode)")
+
+    if sub:
+        tooltip.append(f"sub: {sub['name']}  updated {ago(sub['updated'])}")
+        traffic = sub_traffic(sub)
+        if traffic:
+            tooltip.append(f"traffic: {traffic}")
+    tooltip.append("")
+    tooltip.append("click: menu   right-click: toggle")
+
+    print(json.dumps({
+        "text": text,
+        "class": cls,
+        "alt": cls,
+        "tooltip": "\n".join(tooltip),
+    }))
+
+
+def cmd_ping(args):
+    subs = load_subs()
+    state = load_state()
+    sub = find_sub(subs, args.sub or state.get("sub"))
+    if not sub:
+        die("no subscription selected")
+    results = ping_nodes(sub.get("nodes", []))
+    alive = sum(1 for value in results.values() if value is not None)
+    print(f"{alive}/{len(results)} reachable")
+
+
+def cmd_check(args):
+    latency, message = check_tunnel()
+    if latency is None:
+        die(message)
+    print(f"ok  {latency}ms through the tunnel")
+
+
+def cmd_autoupdate(args):
+    state = load_state()
+    if args.hours is None:
+        print(state["autoupdate_hours"])
+        return
+    state["autoupdate_hours"] = max(1, args.hours)
+    save_json(STATE_FILE, state)
+    print(f"auto-update every {state['autoupdate_hours']}h")
+
+
+def cmd_gen(args):
+    state = load_state()
+    _sub, node = active_node()
+    if not node:
+        die("no node selected")
+    print(write_config(node, state["mode"]))
+
+
+# ----------------------------------------------------------------- cli ----
+
+
+def main():
+    parser = argparse.ArgumentParser(prog="vpnctl", description=__doc__.splitlines()[0])
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    sp = sub.add_parser("sub", help="manage subscriptions")
+    subsub = sp.add_subparsers(dest="subcmd", required=True)
+
+    p = subsub.add_parser("add"); p.add_argument("url"); p.add_argument("--name")
+    p.set_defaults(func=cmd_sub_add)
+    p = subsub.add_parser("list")
+    p.add_argument("--json", action="store_true")
+    p.add_argument("--rofi", action="store_true")
+    p.set_defaults(func=cmd_sub_list)
+    p = subsub.add_parser("remove"); p.add_argument("id"); p.set_defaults(func=cmd_sub_remove)
+    p = subsub.add_parser("rename"); p.add_argument("id"); p.add_argument("name")
+    p.set_defaults(func=cmd_sub_rename)
+    p = subsub.add_parser("update")
+    p.add_argument("id", nargs="?")
+    p.add_argument("--all", action="store_true")
+    p.add_argument("--stale-only", action="store_true")
+    p.add_argument("--quiet", action="store_true")
+    p.set_defaults(func=cmd_sub_update)
+
+    p = sub.add_parser("nodes", help="list nodes in a subscription")
+    p.add_argument("sub", nargs="?")
+    p.add_argument("--json", action="store_true")
+    p.add_argument("--rofi", action="store_true")
+    p.add_argument("--ping", action="store_true")
+    p.set_defaults(func=cmd_nodes)
+
+    p = sub.add_parser("use", help="select a node")
+    p.add_argument("node")
+    p.add_argument("--sub")
+    p.add_argument("--connect", action="store_true")
+    p.set_defaults(func=cmd_use)
+
+    for name, func, help_text in (
+        ("up", cmd_up, "connect"),
+        ("down", cmd_down, "disconnect"),
+        ("toggle", cmd_toggle, "toggle the tunnel"),
+        ("check", cmd_check, "verify traffic flows through the tunnel"),
+        ("waybar", cmd_waybar, "emit waybar json"),
+        ("gen", cmd_gen, "regenerate the sing-box config"),
+    ):
+        sub.add_parser(name, help=help_text).set_defaults(func=func)
+
+    p = sub.add_parser("status", help="show current state")
+    p.add_argument("--json", action="store_true")
+    p.add_argument("--line", action="store_true")
+    p.set_defaults(func=cmd_status)
+
+    p = sub.add_parser("mode", help="tun (system-wide) or proxy (socks/http only)")
+    p.add_argument("mode", nargs="?")
+    p.set_defaults(func=cmd_mode)
+
+    p = sub.add_parser("ping", help="measure tcp latency to every node")
+    p.add_argument("sub", nargs="?")
+    p.set_defaults(func=cmd_ping)
+
+    p = sub.add_parser("autoupdate", help="hours between automatic refreshes")
+    p.add_argument("hours", nargs="?", type=int)
+    p.set_defaults(func=cmd_autoupdate)
+
+    args = parser.parse_args()
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        args.func(args)
+    except KeyboardInterrupt:
+        sys.exit(130)
+    except urllib.error.URLError as exc:
+        die(f"network error: {exc.reason}")
+    except RuntimeError as exc:
+        die(str(exc))
+
+
+if __name__ == "__main__":
+    main()

@@ -12,6 +12,7 @@
         "backlight",
         "cpu",
         "memory",
+        "custom/vpn",
         "network",
         "bluetooth",
         "battery",
@@ -72,6 +73,17 @@
         "interval": 5,
         "format": "mem {percentage}%",
         "tooltip-format": "{used:0.1f}G / {total:0.1f}G"
+    },
+
+    "custom/vpn": {
+        "exec": "$HOME/.config/vpn/vpnctl waybar",
+        "return-type": "json",
+        "interval": 10,
+        "signal": 9,
+        "format": "{}",
+        "on-click": "$HOME/.config/vpn/menu.sh",
+        "on-click-right": "$HOME/.config/vpn/vpnctl toggle",
+        "on-click-middle": "$HOME/.config/vpn/menu.sh nodes"
     },
 
     "network": {
