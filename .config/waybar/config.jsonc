@@ -13,6 +13,7 @@
         "cpu",
         "memory",
         "network",
+        "bluetooth",
         "battery",
         "tray",
         "clock"
@@ -79,6 +80,18 @@
         "format-disconnected": "offline",
         "tooltip-format": "{ifname}  {ipaddr}",
         "on-click": "nm-connection-editor"
+    },
+
+    "bluetooth": {
+        "format": "󰂯",
+        "format-disabled": "󰂲",
+        "format-off": "󰂲",
+        "format-connected": "󰂱 {num_connections}",
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "on-click": "blueman-manager",
+        "on-click-right": "bluetoothctl power toggle"
     },
 
     "battery": {

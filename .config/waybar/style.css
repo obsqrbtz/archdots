@@ -65,6 +65,7 @@ window#waybar.empty #window {
 #cpu,
 #memory,
 #network,
+#bluetooth,
 #battery,
 #clock {
     padding: 0 8px;
@@ -86,6 +87,19 @@ window#waybar.empty #window {
 
 #pulseaudio.muted {
     color: @muted;
+}
+
+#bluetooth {
+    font-size: 14px;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+    color: @muted;
+}
+
+#bluetooth.connected {
+    color: @accent;
 }
 
 #battery.warning {
