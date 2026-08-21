@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "name": "torrents",
+      "action": "direct",
+      "protocol": ["bittorrent"]
+    },
+    {
+      "name": "lan-names",
+      "action": "direct",
+      "domain": [".lan", ".local", ".home.arpa"]
+    },
+    {
+	"name": "russia",
+	"action": "direct",
+	"category": ["category-ru"],
+	"geoip": ["ru"]
+    }
+  ]
+}

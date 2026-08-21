@@ -175,12 +175,13 @@ sub_manager() {
 # ----------------------------------------------------------- main menu ----
 
 main_menu() {
-    local status connected mode rows choice other
+    local status connected mode routing rows choice other
 
     while true; do
         status="$("$VPNCTL" status --json)"
         connected="$(jq -r .connected <<<"$status")"
         mode="$(jq -r .configured_mode <<<"$status")"
+        [ "$(jq -r .routing <<<"$status")" = true ] && routing=on || routing=off
 
         [ "$connected" = true ] && rows="disconnect" || rows="connect"
         rows="$rows
@@ -189,11 +190,12 @@ subscriptions
 ping
 update
 check
+routing: $routing
 mode: $mode
 logs"
 
         set +e
-        choice="$(printf '%s\n' "$rows" | pick -p vpn -l 8 -mesg "$(mesg)")"
+        choice="$(printf '%s\n' "$rows" | pick -p vpn -l 9 -mesg "$(mesg)")"
         set -e
         [ -n "${choice:-}" ] || return
 
@@ -222,6 +224,9 @@ logs"
         check)
             notify "testing connection..." 1500
             report check
+            ;;
+        "routing: $routing")
+            report routing toggle
             ;;
         "mode: $mode")
             [ "$mode" = tun ] && other=proxy || other=tun

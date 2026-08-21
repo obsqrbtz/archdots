@@ -94,6 +94,10 @@ window#waybar.empty #window {
     color: @accent;
 }
 
+#custom-vpn.error {
+    color: @error;
+}
+
 #pulseaudio.muted {
     color: @muted;
 }

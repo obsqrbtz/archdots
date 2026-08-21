@@ -29,6 +29,8 @@ cat >/etc/systemd/system/vpn-tun.service <<'UNIT'
 Description=VPN tunnel (sing-box, managed by vpnctl)
 Documentation=https://sing-box.sagernet.org
 After=network.target nss-lookup.target
+StartLimitIntervalSec=60
+StartLimitBurst=4
 
 [Service]
 User=sing-box

@@ -5,3 +5,4 @@
 .config/mpd/playlists
 .config/mpd/state
 .config/mpd/sticker.sql
+.config/vpn/__pycache__/

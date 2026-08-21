@@ -25,6 +25,7 @@ STATE_DIR = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state"))
 SUBS_FILE = STATE_DIR / "subs.json"
 STATE_FILE = STATE_DIR / "state.json"
 PING_FILE = STATE_DIR / "ping.json"
+RULESET_CACHE = STATE_DIR / "rulesets.json"
 PROXY_CONFIG = STATE_DIR / "config.json"
 TUN_CONFIG = Path("/etc/vpn/config.json")
 
@@ -34,6 +35,15 @@ PROXY_UNIT = "vpn-proxy.service"
 MIXED_PORT = 2080
 SUB_UA = "v2rayNG/1.9.15"
 DEFAULT_AUTOUPDATE_HOURS = 6
+
+RULES_FILE = Path(__file__).resolve().parent / "rules.json"
+
+GEOSITE_URL = "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-{}.srs"
+GEOIP_URL = "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-{}.srs"
+
+RULE_ACTIONS = ("direct", "proxy", "block")
+RULE_MATCHERS = ("domain", "ip", "category", "geoip", "protocol")
+RULE_FIELDS = {"name", "action", "enabled", *RULE_MATCHERS}
 
 # ---------------------------------------------------------------- state ----
 
@@ -65,6 +75,7 @@ def load_state():
     state.setdefault("mode", "tun")
     state.setdefault("sub", None)
     state.setdefault("node", None)
+    state.setdefault("routing", False)
     state.setdefault("autoupdate_hours", DEFAULT_AUTOUPDATE_HOURS)
     return state
 
@@ -409,10 +420,266 @@ def sub_update(sub):
     return f"{len(nodes)} nodes" + (f", {bad} unsupported" if bad else "")
 
 
+# -------------------------------------------------------- routing rules ----
+
+
+class RulesError(RuntimeError):
+    pass
+
+
+def as_list(value):
+    """Accept either a bare string or a list, so single-entry rules read well."""
+    if value is None:
+        return []
+    return [value] if isinstance(value, str) else list(value)
+
+
+def load_rules():
+    """rules.json -> list of enabled, validated rules. A missing file means none."""
+    if not RULES_FILE.exists():
+        return []
+    try:
+        with RULES_FILE.open() as fh:
+            raw = json.load(fh)
+    except OSError as exc:
+        raise RulesError(f"cannot read rules.json: {exc}")
+    except ValueError as exc:
+        raise RulesError(f"rules.json is not valid json: {exc}")
+
+    rules = raw.get("rules") if isinstance(raw, dict) else raw
+    if not isinstance(rules, list):
+        raise RulesError('rules.json must hold a list of rules under "rules"')
+
+    out = []
+    for index, rule in enumerate(rules):
+        if not isinstance(rule, dict):
+            raise RulesError(f"rule {index + 1}: each rule must be an object")
+        label = rule.get("name") or f"rule {index + 1}"
+
+        unknown = set(rule) - RULE_FIELDS
+        if unknown:
+            raise RulesError(f"{label}: unknown field(s) {', '.join(sorted(unknown))}")
+        if rule.get("action") not in RULE_ACTIONS:
+            raise RulesError(f"{label}: action must be one of {', '.join(RULE_ACTIONS)}")
+        if not any(rule.get(m) for m in RULE_MATCHERS):
+            raise RulesError(f"{label}: needs at least one of {', '.join(RULE_MATCHERS)}")
+
+        if rule.get("enabled", True):
+            out.append(rule)
+    return out
+
+
+def has_ipv6_uplink():
+    """True when the machine has real IPv6, i.e. outside our own tun device."""
+    for line in run(["ip", "-6", "-o", "addr", "show", "scope", "global"]).stdout.splitlines():
+        fields = line.split()
+        if len(fields) > 1 and not fields[1].startswith(("tun", "sing")):
+            return True
+    return False
+
+
+def compile_rules(rules):
+    """Rules -> (route rules, dns rules, rule_set declarations).
+
+    Each matcher family becomes its own route rule, because sing-box groups
+    rule fields and AND-s the groups together. Measured against 1.13:
+    domain/domain_suffix/ip_cidr/rule_set share one OR group, but `protocol`
+    forms a group of its own -- so {domain, protocol} in one rule means
+    "domain AND protocol", where this file means "either". Splitting keeps the
+    file's OR reading intact and lines each route rule up with its dns mirror.
+    """
+    route, dns, sets = [], [], {}
+
+    # The tun device advertises IPv6 whether or not the uplink has any. Traffic
+    # we send direct leaves over the real interface, so an AAAA answer for a
+    # direct destination is a connection that cannot complete -- Firefox tries
+    # IPv6 first and gets an instant reset. Resolve those names A-only.
+    # Proxied traffic is unaffected: the tunnel carries IPv6 perfectly well.
+    direct_dns = {"action": "route", "server": "dns-local"}
+    # Belt and braces for the same problem on the routing side: an ip/geoip
+    # matcher can still be handed an IPv6 destination that never went through
+    # our A-only resolver. Pinning direct rules to IPv4 lets those fall through
+    # to the proxy, which reaches IPv6 fine, instead of failing outright.
+    direct_only_v4 = {}
+    if not has_ipv6_uplink():
+        direct_dns["strategy"] = "ipv4_only"
+        direct_only_v4 = {"ip_version": 4}
+
+    for rule in rules:
+        action = rule["action"]
+        outcome = {"action": "reject"} if action == "block" else {"outbound": action}
+        if action == "direct":
+            outcome = {**direct_only_v4, **outcome}
+
+        # -- domains -------------------------------------------------------
+        exact, suffix = [], []
+        for entry in as_list(rule.get("domain")):
+            name = entry.strip().lower().lstrip("*")
+            if name.startswith("."):
+                suffix.append(name)
+            elif name:
+                # cover the apex and everything under it
+                exact.append(name)
+                suffix.append("." + name)
+        if exact or suffix:
+            match = {}
+            if exact:
+                match["domain"] = exact
+            if suffix:
+                match["domain_suffix"] = suffix
+            route.append({**match, **outcome})
+            # A domain routed direct must also resolve locally, or we hand it
+            # answers from the far end of the tunnel and get the wrong CDN.
+            if action == "direct":
+                dns.append({**match, **direct_dns})
+            elif action == "block":
+                dns.append({**match, "action": "reject"})
+
+        # -- literal addresses ---------------------------------------------
+        cidrs = []
+        for entry in as_list(rule.get("ip")):
+            entry = entry.strip()
+            if "/" not in entry:
+                entry += "/128" if ":" in entry else "/32"
+            cidrs.append(entry)
+        if cidrs:
+            # no dns mirror: the address is only known after resolving
+            route.append({"ip_cidr": cidrs, **outcome})
+
+        # -- geosite / geoip categories ------------------------------------
+        site_tags, ip_tags = [], []
+        for name in as_list(rule.get("category")):
+            tag = f"geosite-{name}"
+            sets[tag] = GEOSITE_URL.format(name)
+            site_tags.append(tag)
+        for name in as_list(rule.get("geoip")):
+            tag = f"geoip-{name}"
+            sets[tag] = GEOIP_URL.format(name)
+            ip_tags.append(tag)
+        if site_tags or ip_tags:
+            route.append({"rule_set": site_tags + ip_tags, **outcome})
+            if site_tags and action == "direct":
+                dns.append({"rule_set": site_tags, **direct_dns})
+            elif site_tags and action == "block":
+                dns.append({"rule_set": site_tags, "action": "reject"})
+
+        # -- sniffed protocols (bittorrent, quic, ssh, ...) -----------------
+        protocols = as_list(rule.get("protocol"))
+        if protocols:
+            route.append({"protocol": protocols, **outcome})
+
+    declarations = [
+        {
+            "type": "remote",
+            "tag": tag,
+            "format": "binary",
+            "url": url,
+            # fetched off-tunnel: at startup the proxy is not up yet
+            "download_detour": "direct",
+            "update_interval": "7d",
+        }
+        for tag, url in sorted(sets.items())
+    ]
+    return route, dns, declarations
+
+
+def url_status(url):
+    """True/False when we know, None when we could not tell (offline, etc.)."""
+    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "vpnctl"})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return 200 <= resp.status < 300
+    except urllib.error.HTTPError as exc:
+        return False if exc.code == 404 else None
+    except Exception:
+        return None
+
+
+def suggest_names(name, kind):
+    """Best-effort "did you mean" pulled from the upstream listing."""
+    repo = "sing-geosite" if kind == "geosite" else "sing-geoip"
+    url = f"https://api.github.com/repos/SagerNet/{repo}/git/trees/rule-set"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "vpnctl"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            tree = json.load(resp).get("tree", [])
+    except Exception:
+        return []
+    prefix, names = f"{kind}-", []
+    for entry in tree:
+        path = entry.get("path", "")
+        if path.startswith(prefix) and path.endswith(".srs"):
+            names.append(path[len(prefix):-4])
+
+    # Rank by how the upstream repo actually names things: umbrella lists are
+    # "category-<name>", so a bare "ru" means "category-ru" far more often than
+    # it means "ruby", "rust" or "t2-ru".
+    def rank(candidate):
+        if candidate == name:
+            tier = 0
+        elif candidate == f"category-{name}":
+            tier = 1
+        elif name in candidate.split("-"):
+            tier = 2
+        else:
+            tier = 3
+        return (tier, len(candidate))
+
+    return sorted((n for n in names if name in n), key=rank)[:6]
+
+
+def verify_rule_sets(declarations):
+    """Reject a rule-set that does not exist upstream.
+
+    sing-box treats a 404 here as fatal and systemd restarts it forever, so the
+    tunnel would just never come up. Catching it now turns a silent crash loop
+    into one clear message. Network failures are not treated as proof of
+    absence -- being offline must not stop you connecting.
+    """
+    cache = load_json(RULESET_CACHE, {})
+    checked = False
+
+    for decl in declarations:
+        tag = decl["tag"]
+        if cache.get(tag):
+            continue
+        exists = url_status(decl["url"])
+        if exists is None:
+            continue
+        if not exists:
+            kind, _, name = tag.partition("-")
+            field = "category" if kind == "geosite" else "geoip"
+            message = f'{field} "{name}" does not exist upstream ({decl["url"]})'
+            hint = suggest_names(name, kind)
+            if hint:
+                message += "\ndid you mean: " + ", ".join(hint)
+            die(message)
+        cache[tag] = int(time.time())
+        checked = True
+
+    if checked:
+        save_json(RULESET_CACHE, cache)
+
+
+def routing_rules(enabled):
+    """Compiled rules, or nothing at all if the file is broken.
+
+    Failing closed sends everything through the tunnel, which is the safe way
+    to be wrong -- the alternative leaks traffic the rules meant to divert.
+    """
+    if not enabled:
+        return [], [], []
+    try:
+        return compile_rules(load_rules())
+    except RulesError as exc:
+        warn(f"routing rules ignored -- {exc}")
+        return [], [], []
+
+
 # ---------------------------------------------------------- config gen ----
 
 
-def gen_config(node, mode):
+def gen_config(node, mode, routing=None):
     outbound = dict(node["outbound"])
     outbound["tag"] = "proxy"
 
@@ -432,32 +699,51 @@ def gen_config(node, mode):
             "stack": "mixed",
         })
 
+    if routing is None:
+        routing = load_state()["routing"]
+    route_rules, dns_rules, rule_sets = routing_rules(routing)
+
+    # Scaffolding first, then whatever the rules file asked for, then `final`.
     rules = [{"action": "sniff"}]
     if mode == "tun":
         rules.append({"protocol": "dns", "action": "hijack-dns"})
     rules.append({"ip_is_private": True, "outbound": "direct"})
+    rules.extend(route_rules)
 
-    return {
+    dns = {
+        "servers": [
+            {"type": "udp", "tag": "dns-remote", "server": "1.1.1.1", "detour": "proxy"},
+            {"type": "local", "tag": "dns-local"},
+        ],
+        "final": "dns-remote",
+        "strategy": "prefer_ipv4",
+        "independent_cache": True,
+    }
+    if dns_rules:
+        dns["rules"] = dns_rules
+
+    route = {
+        "rules": rules,
+        "final": "proxy",
+        "auto_detect_interface": True,
+        # resolve the proxy server's own hostname off-tunnel, or we deadlock
+        "default_domain_resolver": {"server": "dns-local"},
+    }
+    if rule_sets:
+        route["rule_set"] = rule_sets
+
+    config = {
         "log": {"level": "warn", "timestamp": True},
-        "dns": {
-            "servers": [
-                {"type": "udp", "tag": "dns-remote", "server": "1.1.1.1", "detour": "proxy"},
-                {"type": "local", "tag": "dns-local"},
-            ],
-            "final": "dns-remote",
-            "strategy": "prefer_ipv4",
-            "independent_cache": True,
-        },
+        "dns": dns,
         "inbounds": inbounds,
         "outbounds": [outbound, {"type": "direct", "tag": "direct"}],
-        "route": {
-            "rules": rules,
-            "final": "proxy",
-            "auto_detect_interface": True,
-            # resolve the proxy server's own hostname off-tunnel, or we deadlock
-            "default_domain_resolver": {"server": "dns-local"},
-        },
+        "route": route,
     }
+    if rule_sets:
+        # without a cache the .srs files are re-downloaded on every start;
+        # the path is relative to the -D working dir each service already sets
+        config["experimental"] = {"cache_file": {"enabled": True, "path": "cache.db"}}
+    return config
 
 
 def config_path(mode):
@@ -471,9 +757,13 @@ def write_config(node, mode):
         die(f"node '{node['name']}' is unusable: {node['error'] or 'no outbound'}")
 
     path = config_path(mode)
+    config = gen_config(node, mode)
+    verify_rule_sets(config.get("route", {}).get("rule_set", []))
+    changed = load_json(path, None) != config
+
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        save_json(path, gen_config(node, mode))
+        save_json(path, config)
         # holds the node credentials -- keep it off world-readable. /etc/vpn is
         # setgid sing-box, so the service still gets at it through the group.
         path.chmod(0o640 if mode == "tun" else 0o600)
@@ -485,7 +775,7 @@ def write_config(node, mode):
     check = run(["sing-box", "check", "-c", str(path)])
     if check.returncode != 0:
         die(f"sing-box rejected the generated config:\n{check.stderr.strip()}")
-    return path
+    return path, changed
 
 
 # ------------------------------------------------------ service control ----
@@ -501,8 +791,13 @@ def unit_cmd(mode, *args):
     return ["systemctl", "--user", *args, PROXY_UNIT]
 
 
+def unit_state(mode):
+    """systemd's word for it: active, activating, failed, inactive..."""
+    return run(unit_cmd(mode, "is-active")).stdout.strip()
+
+
 def is_active(mode):
-    return run(unit_cmd(mode, "is-active")).stdout.strip() == "active"
+    return unit_state(mode) == "active"
 
 
 def running_mode():
@@ -510,6 +805,29 @@ def running_mode():
         if is_active(mode):
             return mode
     return None
+
+
+def broken_mode():
+    """A mode whose service is failing rather than simply switched off.
+
+    Without this a crash-looping tunnel is indistinguishable from one the user
+    turned off, which is how a bad rule-set once hid behind a plain "vpn off".
+    """
+    for mode in ("tun", "proxy"):
+        if unit_state(mode) in ("failed", "activating", "auto-restart"):
+            return mode
+    return None
+
+
+def last_error(mode):
+    unit = TUN_UNIT if mode == "tun" else PROXY_UNIT
+    cmd = ["journalctl", "-n", "40", "--no-pager", "-o", "cat"]
+    cmd += ["-u", unit] if mode == "tun" else ["--user", "-u", unit]
+    for line in reversed(run(cmd).stdout.splitlines()):
+        if "FATAL" in line or "ERROR" in line:
+            # strip the level tag and any ansi colouring journalctl kept
+            return re.sub(r"\x1b\[[0-9;]*m", "", line).split("] ", 1)[-1].strip()
+    return ""
 
 
 def notify_waybar():
@@ -525,11 +843,17 @@ def do_up(quiet=False):
         die(f"node '{node['name']}' is unusable: {node['error']}")
 
     mode = state["mode"]
-    write_config(node, mode)
+    _path, changed = write_config(node, mode)
 
     other = "proxy" if mode == "tun" else "tun"
     if is_active(other):
         run(unit_cmd(other, "stop"))
+
+    if is_active(mode) and not changed:
+        # nothing to apply -- don't drop live connections for a no-op
+        if not quiet:
+            print(f"already connected: {node['name']} ({mode})")
+        return
 
     result = run(unit_cmd(mode, "restart" if is_active(mode) else "start"))
     notify_waybar()
@@ -651,6 +975,13 @@ def sub_traffic(sub):
         days = (info["expire"] - int(time.time())) // 86400
         text += f", {days}d left" if days >= 0 else ", expired"
     return text
+
+
+def warn(message):
+    print(message, file=sys.stderr)
+    if not sys.stderr.isatty():
+        subprocess.run(["notify-send", "-a", "vpn", "-t", "6000", "vpn", message],
+                       capture_output=True)
 
 
 def die(message):
@@ -866,10 +1197,14 @@ def cmd_status(args):
     state = load_state()
     sub, node = active_node()
     mode = running_mode()
+    broken = None if mode else broken_mode()
     info = {
         "connected": bool(mode),
+        "broken": bool(broken),
+        "error": last_error(broken) if broken else "",
         "mode": mode or state["mode"],
         "configured_mode": state["mode"],
+        "routing": state["routing"],
         "sub": sub["name"] if sub else None,
         "node": node["name"] if node else None,
         "node_type": node["type"] if node else None,
@@ -883,8 +1218,10 @@ def cmd_status(args):
 
     if args.line:
         # one-line summary for the rofi -mesg header
-        head = f"connected · {mode}" if mode else "off"
+        head = f"connected · {mode}" if mode else ("FAILING" if broken else "off")
         parts = [head, f"node: {info['node'] or 'none'}", f"sub: {info['sub'] or 'none'}"]
+        if info["routing"]:
+            parts.append("routing: on")
         if info["traffic"]:
             parts.append(info["traffic"])
         print("   ".join(parts))
@@ -892,6 +1229,8 @@ def cmd_status(args):
 
     if mode:
         print(f"connected  {info['node']} ({info['sub']})  {mode}")
+    elif broken:
+        print(f"failing  {broken} service is not staying up\n{info['error']}")
     else:
         print(f"off  selected: {info['node'] or 'none'}")
 
@@ -914,6 +1253,18 @@ def cmd_waybar(args):
                 tooltip.append(f"tcp {entry['ms']}ms")
         if mode == "proxy":
             tooltip.append(f"socks/http on 127.0.0.1:{MIXED_PORT}")
+        tooltip.append(f"routing rules: {'on' if state['routing'] else 'off'}")
+    elif broken_mode():
+        broken = broken_mode()
+        text = "vpn error"
+        cls = "error"
+        tooltip = [f"the {broken} service is not staying up"]
+        reason = last_error(broken)
+        if reason:
+            tooltip.append(reason)
+        tooltip.append("")
+        scope = "" if broken == "tun" else "--user "
+        tooltip.append(f"logs: journalctl {scope}-u vpn-{broken}.service")
     else:
         text = "vpn off"
         cls = "disconnected"
@@ -969,7 +1320,57 @@ def cmd_gen(args):
     _sub, node = active_node()
     if not node:
         die("no node selected")
-    print(write_config(node, state["mode"]))
+    path, _changed = write_config(node, state["mode"])
+    print(path)
+
+
+def cmd_routing(args):
+    state = load_state()
+
+    if args.list:
+        try:
+            rules = load_rules()
+        except RulesError as exc:
+            die(str(exc))
+        if not rules:
+            print(f"no rules in {RULES_FILE}")
+            return
+        width = max(len(r.get("name") or "") for r in rules)
+        for rule in rules:
+            matchers = ", ".join(
+                f"{m}={len(as_list(rule[m]))}" for m in RULE_MATCHERS if rule.get(m)
+            )
+            print(f"{(rule.get('name') or '-').ljust(width)}  {rule['action'].ljust(6)}  {matchers}")
+        return
+
+    if not args.action:
+        print("on" if state["routing"] else "off")
+        return
+
+    if args.action == "toggle":
+        want = not state["routing"]
+    elif args.action in ("on", "off"):
+        want = args.action == "on"
+    else:
+        die("routing takes on, off or toggle")
+
+    # Validate loudly here -- gen_config only warns and falls back, which is
+    # right when connecting but useless when you are asking for rules on purpose.
+    if want:
+        try:
+            rules = load_rules()
+        except RulesError as exc:
+            die(str(exc))
+        if not rules:
+            warn(f"routing is on but {RULES_FILE} has no enabled rules")
+
+    state["routing"] = want
+    save_json(STATE_FILE, state)
+
+    if running_mode():
+        do_up(quiet=True)
+    notify_waybar()
+    print(f"routing: {'on' if want else 'off'}")
 
 
 # ----------------------------------------------------------------- cli ----
@@ -1029,6 +1430,11 @@ def main():
     p = sub.add_parser("mode", help="tun (system-wide) or proxy (socks/http only)")
     p.add_argument("mode", nargs="?")
     p.set_defaults(func=cmd_mode)
+
+    p = sub.add_parser("routing", help="apply the rules in rules.json, or don't")
+    p.add_argument("action", nargs="?", choices=["on", "off", "toggle"])
+    p.add_argument("--list", action="store_true", help="show the rules that would apply")
+    p.set_defaults(func=cmd_routing)
 
     p = sub.add_parser("ping", help="measure tcp latency to every node")
     p.add_argument("sub", nargs="?")
