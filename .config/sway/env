@@ -16,6 +16,9 @@ export QT_AUTO_SCREEN_SCALE_FACTOR=1
 export GDK_BACKEND=wayland
 export ELECTRON_OZONE_PLATFORM_HINT=wayland
 export MOZ_ENABLE_WAYLAND=1
+# No client-side decorations: kills Firefox's CSD titlebar and its rounded
+# corners, so sway draws its own 1px border like every other window.
+export MOZ_GTK_TITLEBAR_DECORATION=none
 export SDL_VIDEODRIVER=wayland
 
 export WLR_RENDERER_ALLOW_SOFTWARE=1
