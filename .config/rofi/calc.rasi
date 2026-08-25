@@ -1,0 +1,18 @@
+// Single-line-result variant of the base theme, used by sway/scripts/calc.sh.
+// rofi-calc puts the live result in the first row and past results below it.
+@import "~/.config/rofi/theme.rasi"
+
+window {
+    width: 44%;
+}
+
+listview {
+    lines:        8;
+    fixed-height: false;
+}
+
+// The first row is the live result, so give it the accent instead of the
+// muted history rows below.
+element normal.normal {
+    text-color: @fg;
+}
