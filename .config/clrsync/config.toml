@@ -5,7 +5,7 @@ font_size = 16
 palettes_path = '~/.config/clrsync/palettes'
 
 [templates.dunst]
-enabled = true
+enabled = false
 input_path = '~/.config/clrsync/templates/dunstrc.conf'
 output_path = '~/.config/dunst/dunstrc.d/50-clrsync.conf'
 reload_cmd = 'dunstctl reload'
@@ -77,9 +77,9 @@ output_path = '/home/dan/.config/qt6ct/colors/clrsync.conf'
 reload_cmd = ''
 
 [templates.quickshell]
-enabled = false
-input_path = '/home/dan/.config/clrsync/templates/quickshell.qml'
-output_path = '/home/dan/.config/quickshell/basedgoose.shell/Commons/Theme.qml'
+enabled = true
+input_path = '~/.config/clrsync/templates/basedgoose-shell.json'
+output_path = '~/.config/basedgoose.shell/colorschemes/clrsync.json'
 reload_cmd = ''
 
 [templates.rofi]
@@ -107,7 +107,7 @@ output_path = '/home/dan/.vscode/extensions/obsqrbtz.clrsync-1.0.2/themes/clrsyn
 reload_cmd = ''
 
 [templates.waybar]
-enabled = true
+enabled = false
 input_path = '~/.config/clrsync/templates/waybar.css'
 output_path = '~/.config/waybar/colors.css'
 reload_cmd = 'pkill -SIGUSR2 waybar'

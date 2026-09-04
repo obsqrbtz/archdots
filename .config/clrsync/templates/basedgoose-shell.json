@@ -1,0 +1,18 @@
+{
+  "name": "clrsync",
+  "background": "{background.hex}",
+  "surfaceBase": "{surface.hex}",
+  "surfaceContainer": "{surface_variant.hex}",
+  "border": "{border_focused.hex}",
+  "surfaceBorder": "{border.hex}",
+  "foreground": "{foreground.hex}",
+  "foregroundMuted": "{editor_comment.hex}",
+  "primary": "{accent.hex}",
+  "primaryMuted": "{editor_selection.hex}",
+  "secondary": "{accent_secondary.hex}",
+  "secondaryMuted": "{editor_selection_inactive.hex}",
+  "info": "{info.hex}",
+  "warning": "{warning.hex}",
+  "success": "{success.hex}",
+  "error": "{error.hex}"
+}

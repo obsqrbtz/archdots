@@ -6,3 +6,9 @@
 .config/mpd/state
 .config/mpd/sticker.sql
 .config/vpn/__pycache__/
+
+.config/fish/fish_variables
+.config/fish/fishd.*
+.config/fish/fish_history
+
+.config/clrsync/layout.ini

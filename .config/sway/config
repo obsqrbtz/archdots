@@ -9,11 +9,11 @@
 ### Applications
 set $term        ghostty
 set $filemanager nautilus
-set $menu        rofi -show drun
 set $scripts     ~/.config/sway/scripts
 
-### Modifier
-# Mod4 = Super, Mod1 = Alt
+set $shell       qs -c basedgoose-shell ipc call
+set $menu        $shell launcher toggle
+
 set $mod Mod4
 
 ### Directions

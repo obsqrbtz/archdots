@@ -1,0 +1,18 @@
+{
+  "name": "clrsync",
+  "background": "#111111",
+  "surfaceBase": "#111111",
+  "surfaceContainer": "#191919",
+  "border": "#2E2E2E",
+  "surfaceBorder": "#242424",
+  "foreground": "#D2D2D2",
+  "foregroundMuted": "#849899",
+  "primary": "#9A8652",
+  "primaryMuted": "#242424",
+  "secondary": "#9A8652",
+  "secondaryMuted": "#1D1C1C",
+  "info": "#3A898C",
+  "warning": "#B47837",
+  "success": "#668A51",
+  "error": "#AA4E4A"
+}

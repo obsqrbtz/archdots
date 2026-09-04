@@ -1,12 +1,9 @@
 [submodule ".config/waybar/wireguard-manager"]
 	path = .config/waybar/wireguard-manager
 	url = https://github.com/obsqrbtz/wireguard-manager.git
-[submodule ".config/quickshell"]
-	path = .config/quickshell
-	url = https://github.com/obsqrbtz/basedgoose.shell.git
-[submodule ".config/quickshell/basedgoose.shell"]
-	path = .config/quickshell/basedgoose.shell
-	url = https://github.com/obsqrbtz/basedgoose.shell.git
 [submodule ".config/nvim"]
 	path = .config/nvim
 	url = https://github.com/obsqrbtz/basedgoose.nvim.git
+[submodule ".config/quickshell/basedgoose-shell"]
+	path = .config/quickshell/basedgoose-shell
+	url = https://github.com/obsqrbtz/basedgoose.shell.git
