@@ -2,6 +2,11 @@
 set -euo pipefail
 
 DIR="${XDG_SCREENSHOTS_DIR:-$HOME/Pictures/scrots}"
+# Sometimes this script created dir named literally "~" in $PWD. Expand it here to $HOME.
+case "$DIR" in
+"~") DIR="$HOME" ;;
+"~"/*) DIR="$HOME/${DIR#\~/}" ;;
+esac
 mkdir -p "$DIR"
 FILE="$DIR/$(date +%Y%m%d_%Hh%Mm%Ss)_grim.png"
 
