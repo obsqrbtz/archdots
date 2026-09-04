@@ -9,6 +9,7 @@ SETUVAR _fisher_patrickf1_2F_fzf_2E_fish_files:\x7e/\x2econfig/fish/functions/_f
 SETUVAR _fisher_plugins:jorgebucaran/fisher\x1ejorgebucaran/hydro\x1ejoseluisq/gitnow\x402\x2e13\x2e0\x1epatrickf1/fzf\x2efish
 SETUVAR _fisher_upgraded_to_4_4:\x1d
 SETUVAR _hydro_git_11906:master\x20
+SETUVAR _hydro_git_18640:master\u2022\x20
 SETUVAR _hydro_git_2220:\x1d
-SETUVAR _hydro_git_3374:master\u2022\x20
+SETUVAR _hydro_git_9831:sway\u2022\x20
 SETUVAR fish_user_paths:/home/dan/go/bin\x1e/home/dan/\x2eopencode/bin

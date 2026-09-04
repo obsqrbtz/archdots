@@ -1,7 +1,7 @@
 [general]
 default_theme = 'dark'
-font = 'MonaspiceNe Nerd Font'
-font_size = 14
+font = 'JetBrainsMono Nerd Font'
+font_size = 16
 palettes_path = '~/.config/clrsync/palettes'
 
 [templates.dunst]
