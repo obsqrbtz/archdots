@@ -92,8 +92,8 @@ button.text.color={on_surface}
 disabled.text.color={editor_comment}
 tooltip.text.color={on_surface}
 highlight.text.color={on_surface}
-link.color={base06}
-link.visited.color={base0D}
+link.color={editor_link}
+link.visited.color={term13}
 progress.indicator.text.color={on_surface}
 
 [Hacks]
