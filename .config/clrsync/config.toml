@@ -4,6 +4,12 @@ font = 'JetBrainsMono Nerd Font'
 font_size = 16
 palettes_path = '~/.config/clrsync/palettes'
 
+[templates.awesome]
+enabled = true
+input_path = '~/.config/clrsync/templates/awesome.lua'
+output_path = '~/.config/awesome/theme/colors.lua'
+reload_cmd = 'awesome-client "awesome.restart()"'
+
 [templates.dunst]
 enabled = false
 input_path = '~/.config/clrsync/templates/dunstrc.conf'
