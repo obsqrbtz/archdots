@@ -1,0 +1,13 @@
+spawn-at-startup "/usr/bin/gnome-keyring-daemon" "--start" "--components=pkcs11,secrets,ssh,gpg"
+spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+
+spawn-at-startup "qs" "-c" "basedgoose-shell"
+spawn-at-startup "udiskie"
+spawn-at-startup "kdeconnectd"
+spawn-at-startup "flameshot"
+spawn-at-startup "bitwarden-desktop"
+spawn-at-startup "seafile-applet"
+
+spawn-at-startup "wl-paste" "--watch" "cliphist" "store"
+
+spawn-sh-at-startup "~/.config/niri/scripts/gtk.sh"

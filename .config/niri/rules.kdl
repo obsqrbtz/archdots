@@ -1,0 +1,55 @@
+// Window rules. niri already floats dialogs that have a parent window.
+
+// ### Generic dialogs
+window-rule {
+    match title="^(Open File|Open Folder|Save As|Select a File|Choose wallpaper|Library|File Upload)"
+    match title="(wants to save|wants to open)$"
+    match title="Welcome$"
+    open-floating true
+}
+
+// ### Floating utilities
+window-rule {
+    match app-id="^(pavucontrol|org\\.pulseaudio\\.pavucontrol)$"
+    match app-id="^nm-connection-editor$"
+    match app-id="^Zotero$"
+    open-floating true
+    default-column-width { proportion 0.45; }
+    default-window-height { proportion 0.45; }
+}
+
+window-rule {
+    match app-id="^blueberry\\.py$"
+    match app-id="^blueman-manager$"
+    match app-id="^guifetch$"
+    match app-id="^kcm_.*"
+    match app-id=".*bluedevilwizard$"
+    match app-id="^org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde$"
+    match app-id="^Nsxiv$"
+    open-floating true
+}
+
+// ### Screenshot overlay
+window-rule {
+    match app-id="^flameshot$"
+    open-floating true
+    open-fullscreen false
+    geometry-corner-radius 0
+    default-floating-position x=0 y=0 relative-to="top-left"
+}
+
+// ### Picture-in-Picture
+window-rule {
+    match title="^[Pp]icture[- ]?[Ii]n[- ]?[Pp]icture"
+    open-floating true
+    default-column-width { proportion 0.25; }
+    default-window-height { proportion 0.25; }
+    default-floating-position x=32 y=32 relative-to="bottom-right"
+}
+
+// ### Dolphin's copy dialog insists on being in the way
+window-rule {
+    match title="^Copying — Dolphin$"
+    open-floating true
+    default-floating-position x=40 y=80 relative-to="top-left"
+}

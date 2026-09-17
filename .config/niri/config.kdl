@@ -1,0 +1,58 @@
+// niri
+// https://github.com/YaLTeR/niri/wiki
+//
+// Split across included files, in order:
+//   input  outputs  layout  colors  rules  binds  autostart
+//
+// niri watches every included file, so edits apply on save.
+
+include "input.kdl"
+include "outputs.kdl"
+include "layout.kdl"
+include "colors.kdl"
+include "rules.kdl"
+include "binds.kdl"
+include "autostart.kdl"
+
+workspace "1"
+workspace "2"
+workspace "3"
+workspace "4"
+workspace "5"
+workspace "6"
+workspace "7"
+workspace "8"
+workspace "9"
+workspace "10"
+
+prefer-no-csd
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+screenshot-path "~/Pictures/scrots/%Y%m%d_%Hh%Mm%Ss_niri.png"
+
+cursor {
+    xcursor-theme "Sweet-cursors"
+    xcursor-size 24
+}
+
+environment {
+    EDITOR "nvim"
+    XDG_SCREENSHOTS_DIR "/home/dan/Pictures/scrots"
+    XDG_MENU_PREFIX "plasma-"
+
+    QT_QPA_PLATFORM "wayland"
+    QT_QPA_PLATFORMTHEME "qt5ct"
+    QT_STYLE_OVERRIDE "kvantum"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+    QT_AUTO_SCREEN_SCALE_FACTOR "1"
+
+    GDK_BACKEND "wayland,x11"
+    ELECTRON_OZONE_PLATFORM_HINT "wayland"
+    MOZ_ENABLE_WAYLAND "1"
+    MOZ_GTK_TITLEBAR_DECORATION "none"
+    SDL_VIDEODRIVER "wayland"
+    _JAVA_AWT_WM_NONREPARENTING "1"
+}

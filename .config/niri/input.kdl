@@ -1,0 +1,31 @@
+// Input
+// Devices: niri msg outputs / libinput list-devices
+
+input {
+    keyboard {
+        xkb {
+            layout "us,ru"
+            options "grp:alt_shift_toggle,compose:ralt"
+        }
+        numlock
+    }
+
+    touchpad {
+        tap
+        dwtp
+        natural-scroll
+        accel-profile "adaptive"
+        accel-speed 0.1
+        scroll-method "two-finger"
+        click-method "clickfinger"
+        tap-button-map "left-right-middle"
+    }
+
+    mouse {
+        accel-profile "flat"
+        accel-speed -0.3
+    }
+
+    focus-follows-mouse
+    warp-mouse-to-focus
+}

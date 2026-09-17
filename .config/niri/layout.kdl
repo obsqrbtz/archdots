@@ -1,0 +1,44 @@
+layout {
+    gaps 10
+    center-focused-column "never"
+    background-color "transparent"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    preset-window-heights {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    default-column-width { proportion 0.5; }
+
+    focus-ring {
+        width 2
+    }
+
+    border {
+        off
+        width 1
+    }
+}
+
+animations {
+    slowdown 1.2
+}
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// Keep the wallpaper visible behind workspaces and in the overview
+layer-rule {
+    match namespace="^(swww|awww)-daemon$"
+    match namespace="^wallpaper$"
+    place-within-backdrop true
+}

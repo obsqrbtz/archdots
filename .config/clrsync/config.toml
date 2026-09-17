@@ -64,6 +64,12 @@ input_path = '/home/dan/.config/clrsync/templates/kvantum/kvantum.svg'
 output_path = '/home/dan/.config/Kvantum/clrsync/clrsync.svg'
 reload_cmd = ''
 
+[templates.niri]
+enabled = true
+input_path = '~/.config/clrsync/templates/niri.kdl'
+output_path = '~/.config/niri/colors.kdl'
+reload_cmd = ''
+
 [templates.nvim]
 enabled = true
 input_path = '~/.config/clrsync/templates/nvim.lua'
